@@ -6,3 +6,4 @@ data class Producto(
     val precio: Double,
     val stock: Int
 )
+
