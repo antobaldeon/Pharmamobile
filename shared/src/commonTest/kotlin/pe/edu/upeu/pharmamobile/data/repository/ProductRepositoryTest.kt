@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
-class ProductoRepositoryTest {
+class ProductRepositoryTest {
 
     @Test
     fun obtenerProductosRetornaListaSimulada() = runTest {
