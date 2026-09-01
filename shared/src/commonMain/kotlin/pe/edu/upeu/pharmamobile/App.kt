@@ -39,6 +39,7 @@ import pe.edu.upeu.pharmamobil.navigation.Screen
 import pe.edu.upeu.pharmamobil.presentation.inicio.InicioScreen
 import pe.edu.upeu.pharmamobil.theme.PharmaMobilTheme
 import pe.edu.upeu.pharmamobile.Domain.presentation.Cliente.ClienteScreen
+import pe.edu.upeu.pharmamobile.Domain.presentation.Pedido.PedidoScreen
 import pe.edu.upeu.pharmamobile.Domain.presentation.Producto.ProductoScreen
 
 @Composable
@@ -252,13 +253,8 @@ fun App() {
                     }
 
                     Screen.Pedidos -> {
-
-                        Column(
-                            modifier = Modifier
-                                .padding(paddingValues)
-                        ) {
-
-                            Text("Pantalla de pedidos en construcción")
+                        Column(modifier = Modifier.padding(paddingValues)) {
+                            PedidoScreen()   // en lugar del Text("...en construcción")
                         }
                     }
                 }
