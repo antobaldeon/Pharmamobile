@@ -1,6 +1,7 @@
 package pe.edu.upeu.pharmamobile
 
 import android.os.Build
+import com.google.firebase.database.core.Platform
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"

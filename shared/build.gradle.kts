@@ -43,6 +43,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
+            implementation(libs.firebase.database.ktx)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -56,6 +57,7 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(compose.materialIconsExtended)
         }
 
         commonTest.dependencies {
