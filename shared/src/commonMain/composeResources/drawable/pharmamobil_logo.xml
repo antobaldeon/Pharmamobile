@@ -1,0 +1,16 @@
+<!-- AGREGADO (Reto 02): Logo vectorial compartido de PharmaMobil para las plataformas del proyecto. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <path
+        android:fillColor="#006C4C"
+        android:pathData="M60,4A56,56 0,1 0,60,116A56,56 0,1 0,60,4" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,27L70,27L70,50L93,50L93,70L70,70L70,93L50,93L50,70L27,70L27,50L50,50Z" />
+    <path
+        android:fillColor="#8DF8C7"
+        android:pathData="M79,25C91,30 98,42 98,55C91,50 84,49 76,51C80,43 81,34 79,25Z" />
+</vector>

@@ -46,6 +46,8 @@ kotlin {
             implementation(libs.firebase.database)
         }
         commonMain.dependencies {
+            // AGREGADO (Reto 02): Soporta el estado y los flujos compartidos del inventario.
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -57,6 +59,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
         }
         commonTest.dependencies {
+            // AGREGADO (Reto 02): Habilita runTest en las pruebas de repositorio existentes.
+            implementation(libs.kotlinx.coroutines.test)
             implementation(libs.kotlin.test)
         }
     }
