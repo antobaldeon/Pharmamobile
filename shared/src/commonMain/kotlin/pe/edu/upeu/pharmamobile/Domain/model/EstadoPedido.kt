@@ -1,4 +1,4 @@
-package pe.edu.upeu.pharmamobile.Domain.model
+package pe.edu.upeu.pharmamobile.domain.model
 
 sealed class EstadoPedido {
     data object Pendiente : EstadoPedido()

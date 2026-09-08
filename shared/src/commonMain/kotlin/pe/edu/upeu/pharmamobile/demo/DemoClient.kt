@@ -1,6 +1,6 @@
 package pe.edu.upeu.pharmamobile.demo
 
-import pe.edu.upeu.pharmamobile.Domain.model.Cliente
+import pe.edu.upeu.pharmamobile.domain.model.Cliente
 
 fun probarCliente(){
     val cliente = Cliente(

@@ -1,4 +1,4 @@
-package pe.edu.upeu.pharmamobile.Domain.model
+package pe.edu.upeu.pharmamobile.domain.model
 
 data class DetallePedido(
     val producto: Producto,
