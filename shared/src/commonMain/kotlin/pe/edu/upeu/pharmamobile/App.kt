@@ -33,24 +33,22 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.koin.compose.KoinContext
 import pe.edu.upeu.pharmamobil.navigation.Screen
 import pe.edu.upeu.pharmamobil.presentation.inicio.InicioScreen
 import pe.edu.upeu.pharmamobil.theme.PharmaMobilTheme
-import pe.edu.upeu.pharmamobile.Domain.model.Producto
 import pe.edu.upeu.pharmamobile.Domain.presentation.Cliente.ClienteScreen
 import pe.edu.upeu.pharmamobile.Domain.presentation.Pedido.PedidoScreen
-import pe.edu.upeu.pharmamobile.Domain.presentation.Producto.ProductoScreen
+import pe.edu.upeu.pharmamobile.presentation.producto.ProductoScreen
 
 // AGREGADO (Reto 02): Define el patrón de navegación según el ancho disponible.
 private enum class NavigationLayout { Compacto, Mediano, Amplio }
@@ -72,19 +70,15 @@ private val navigationDestinations = listOf(
 
 @Composable
 fun App() {
+    KoinContext {
+        PharmaMobilApp()
+    }
+}
+
+@Composable
+private fun PharmaMobilApp() {
     var pantallaActual by remember { mutableStateOf<Screen>(Screen.Inicio) }
     var darkTheme by remember { mutableStateOf(false) }
-
-    // AGREGADO (Reto 02): Mantiene el inventario simulado aunque se cambie de destino.
-    val inventario = remember {
-        mutableStateListOf(
-            Producto(1L, "Paracetamol", 15.50, 100, activo = true),
-            Producto(2L, "Ibuprofeno", 18.90, 50, activo = true),
-            Producto(3L, "Amoxicilina", 25.00, 5, activo = true),
-            Producto(4L, "Loratadina", 12.50, 0, activo = false),
-            Producto(5L, "Diclofenaco", 20.00, 3, activo = true)
-        )
-    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -118,7 +112,6 @@ fun App() {
                     PharmaScaffold(
                         modifier = Modifier.fillMaxSize(),
                         pantallaActual = pantallaActual,
-                        inventario = inventario,
                         onOpenDrawer = { scope.launch { drawerState.open() } }
                     )
                 }
@@ -138,7 +131,6 @@ fun App() {
                     PharmaScaffold(
                         modifier = Modifier.weight(1f),
                         pantallaActual = pantallaActual,
-                        inventario = inventario
                     )
                 }
 
@@ -158,7 +150,6 @@ fun App() {
                     PharmaScaffold(
                         modifier = Modifier.fillMaxSize(),
                         pantallaActual = pantallaActual,
-                        inventario = inventario
                     )
                 }
             }
@@ -171,7 +162,6 @@ fun App() {
 private fun PharmaScaffold(
     modifier: Modifier,
     pantallaActual: Screen,
-    inventario: SnapshotStateList<Producto>,
     onOpenDrawer: (() -> Unit)? = null
 ) {
     Scaffold(
@@ -192,11 +182,7 @@ private fun PharmaScaffold(
         Column(modifier = Modifier.padding(paddingValues)) {
             when (pantallaActual) {
                 Screen.Inicio -> InicioScreen()
-                // MODIFICADO (Reto 02): Entrega el inventario a Productos para Tabs y registros nuevos.
-                Screen.Productos -> ProductoScreen(
-                    inventario = inventario,
-                    onProductoRegistrado = { inventario.add(it) }
-                )
+                Screen.Productos -> ProductoScreen()
                 Screen.Clientes -> ClienteScreen()
                 Screen.Pedidos -> PedidoScreen()
             }

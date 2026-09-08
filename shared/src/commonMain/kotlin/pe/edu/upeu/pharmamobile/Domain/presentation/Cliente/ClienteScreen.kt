@@ -20,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import pe.edu.upeu.pharmamobile.Domain.model.Cliente
+import pe.edu.upeu.pharmamobile.domain.model.Cliente
 import kotlin.random.Random
 import kotlin.time.Clock
 
