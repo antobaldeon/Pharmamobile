@@ -1,4 +1,4 @@
-package pe.edu.upeu.pharmamobile.Domain.presentation.Pedido
+package pe.edu.upeu.pharmamobile.domain.presentation.Pedido
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

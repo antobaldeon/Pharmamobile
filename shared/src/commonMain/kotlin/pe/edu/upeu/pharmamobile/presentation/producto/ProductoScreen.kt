@@ -100,7 +100,7 @@ private fun ListaProductos(productos: List<Producto>, filtro: FiltroProducto) {
         return
     }
 
-    LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(productosFiltrados, key = Producto::id) { producto ->
             ListItem(
                 headlineContent = { Text(producto.nombre) },

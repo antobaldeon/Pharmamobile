@@ -1,4 +1,4 @@
-package pe.edu.upeu.pharmamobile.Domain.presentation.Cliente
+package pe.edu.upeu.pharmamobile.domain.presentation.Cliente
 
 data class ClienteValidationResult(
     val errorNombre: Boolean = false,
