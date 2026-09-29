@@ -63,6 +63,14 @@ fun ProductoScreen(viewModel: ProductoViewModel = koinViewModel()) {
         }
         uiState.mensajeExito?.let { Text(it) }
 
+        Button(
+            onClick = viewModel::recargarProductos,
+            enabled = uiState.fase != FaseProductos.Cargando,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Recargar")
+        }
+
         TabRow(selectedTabIndex = uiState.filtroSeleccionado.ordinal) {
             FiltroProducto.entries.forEach { filtro ->
                 Tab(

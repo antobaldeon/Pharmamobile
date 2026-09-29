@@ -54,6 +54,12 @@ class ProductoViewModel(
         }
     }
 
+    fun recargarProductos() {
+        if (_uiState.value.fase != FaseProductos.Cargando) {
+            listarProductos()
+        }
+    }
+
     private fun listarProductos() {
         viewModelScope.launch {
             _uiState.update { it.copy(fase = FaseProductos.Cargando) }
