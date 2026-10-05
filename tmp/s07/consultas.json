@@ -1,0 +1,20 @@
+[
+  {
+    "url": "http://127.0.0.1:8080/api/v1/productos/1",
+    "status": 200,
+    "body": "{\"id\":1,\"nombre\":\"Paracetamol\",\"precio\":2.5,\"stock\":10,\"estado\":true,\"categoriaId\":1,\"categoriaNombre\":\"Migraña\",\"fechaCreacion\":\"2026-09-29T16:43:40.515444\",\"fechaModificacion\":null}",
+    "timestamp": "2026-10-01T23:15:07.100754-05:00"
+  },
+  {
+    "url": "http://127.0.0.1:8080/api/v1/productos/9223372036854775807",
+    "status": 404,
+    "body": "{\"timestamp\":\"2026-10-01T23:15:07.1253432\",\"status\":404,\"error\":\"Not Found\",\"message\":\"Producto no encontrado con id: 9223372036854775807\",\"path\":\"/api/v1/productos/9223372036854775807\",\"validationErrors\":null}",
+    "timestamp": "2026-10-01T23:15:07.133418-05:00"
+  },
+  {
+    "url": "http://127.0.0.1:8080/api/v1/productos/abc",
+    "status": 400,
+    "body": "{\"timestamp\":\"2026-10-01T23:15:07.14469\",\"status\":400,\"error\":\"Bad Request\",\"message\":\"El parámetro 'id' tiene un formato inválido\",\"path\":\"/api/v1/productos/abc\",\"validationErrors\":{\"id\":\"Valor inválido: 'abc'\"}}",
+    "timestamp": "2026-10-01T23:15:07.154769-05:00"
+  }
+]
