@@ -9,6 +9,8 @@ fun ProductoDto.toDomain(): Producto {
         nombre = nombre,
         precio = precio,
         stock = stock,
-        activo = estado
+        activo = estado,
+        categoriaId = categoriaId ?: 1
     )
 }
+fun Producto.toRequest() = pe.edu.upeu.pharmamobile.data.remote.dto.ProductoRequestDto(nombre, precio, stock, activo, categoriaId)

@@ -33,7 +33,7 @@ fun ProductoScreen(viewModel: ProductoViewModel = koinViewModel()) {
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Registro de Producto")
+        Text(if (uiState.productoEditando == null) "Registro de Producto" else "Editar producto")
         OutlinedTextField(
             value = uiState.nombre,
             onValueChange = viewModel::actualizarNombre,
@@ -58,14 +58,26 @@ fun ProductoScreen(viewModel: ProductoViewModel = koinViewModel()) {
             supportingText = { uiState.errorStock?.let { Text(it) } },
             modifier = Modifier.fillMaxWidth()
         )
-        Button(onClick = viewModel::registrarProducto, modifier = Modifier.fillMaxWidth()) {
-            Text("Registrar")
+        OutlinedTextField(
+            value = uiState.categoriaId,
+            onValueChange = viewModel::actualizarCategoria,
+            label = { Text("ID de categoría") },
+            isError = uiState.errorCategoria != null,
+            supportingText = { uiState.errorCategoria?.let { Text(it) } },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(onClick = viewModel::registrarProducto, enabled = uiState.operacion !is OperacionProducto.EnCurso, modifier = Modifier.fillMaxWidth()) {
+            Text(if (uiState.operacion is OperacionProducto.EnCurso) "Procesando..." else if (uiState.productoEditando == null) "Registrar" else "Guardar cambios")
         }
+        if (uiState.productoEditando != null) {
+            Button(onClick = viewModel::cancelarEdicion, enabled = uiState.operacion !is OperacionProducto.EnCurso) { Text("Cancelar edición") }
+        }
+        (uiState.operacion as? OperacionProducto.Fallida)?.let { Text(it.mensaje) }
         uiState.mensajeExito?.let { Text(it) }
 
         Button(
             onClick = viewModel::recargarProductos,
-            enabled = uiState.fase != FaseProductos.Cargando,
+            enabled = uiState.fase != FaseProductos.Cargando && uiState.operacion !is OperacionProducto.EnCurso,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Recargar")
@@ -89,14 +101,17 @@ fun ProductoScreen(viewModel: ProductoViewModel = koinViewModel()) {
             is FaseProductos.Error -> Text("Error: ${fase.mensaje}")
             is FaseProductos.ConProductos -> ListaProductos(
                 productos = fase.productos,
-                filtro = uiState.filtroSeleccionado
+                filtro = uiState.filtroSeleccionado,
+                habilitado = uiState.operacion !is OperacionProducto.EnCurso,
+                editar = viewModel::editar,
+                eliminar = viewModel::eliminar
             )
         }
     }
 }
 
 @Composable
-private fun ListaProductos(productos: List<Producto>, filtro: FiltroProducto) {
+private fun ListaProductos(productos: List<Producto>, filtro: FiltroProducto, habilitado: Boolean, editar: (Producto) -> Unit, eliminar: (Long) -> Unit) {
     val productosFiltrados = when (filtro) {
         FiltroProducto.Activos -> productos.filter { it.activo }
         FiltroProducto.Inactivos -> productos.filterNot { it.activo }
@@ -118,6 +133,10 @@ private fun ListaProductos(productos: List<Producto>, filtro: FiltroProducto) {
                     Text("S/ ${producto.precio} · Stock: ${producto.stock} · $estado$reposicion")
                 }
             )
+            androidx.compose.foundation.layout.Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { editar(producto) }, enabled = habilitado) { Text("Editar") }
+                Button(onClick = { eliminar(producto.id) }, enabled = habilitado) { Text("Eliminar") }
+            }
             HorizontalDivider()
         }
     }

@@ -80,6 +80,23 @@ class ProductoViewModelTest {
         assertEquals(0, repositorio.registrosRealizados)
     }
 
+    @Test
+    fun errorDelServidorApareceDebajoDelCampo() = runTest {
+        val error = pe.edu.upeu.pharmamobile.domain.error.ErrorApiException(
+            pe.edu.upeu.pharmamobile.domain.error.ErrorApi.Validacion(mapOf("nombre" to "Mínimo 3 caracteres"))
+        )
+        val viewModel = crearViewModel(RepositorioFalso(errorAlRegistrar = error))
+        advanceUntilIdle()
+        viewModel.actualizarNombre("AB")
+        viewModel.actualizarPrecio("10")
+        viewModel.actualizarStock("2")
+        viewModel.registrarProducto()
+        advanceUntilIdle()
+        assertEquals("Mínimo 3 caracteres", viewModel.uiState.value.errorNombre)
+        assertIs<OperacionProducto.Inactiva>(viewModel.uiState.value.operacion)
+        assertIs<FaseProductos.SinProductos>(viewModel.uiState.value.fase)
+    }
+
     private fun crearViewModel(repositorio: ProductoRepository): ProductoViewModel = ProductoViewModel(
         registrarProducto = RegistrarProductoUseCase(repositorio),
         productoRepository = repositorio
@@ -87,15 +104,21 @@ class ProductoViewModelTest {
 
     private class RepositorioFalso(
         private val productos: List<Producto> = emptyList(),
-        private val errorAlListar: Throwable? = null
+        private val errorAlListar: Throwable? = null,
+        private val errorAlRegistrar: Throwable? = null
     ) : ProductoRepository {
         var registrosRealizados = 0
             private set
 
         override suspend fun registrar(producto: Producto): Producto {
+            errorAlRegistrar?.let { throw it }
             registrosRealizados++
             return producto.copy(id = 1)
         }
+
+        override suspend fun obtener(id: Long) = productos.first { it.id == id }
+        override suspend fun actualizar(producto: Producto) = producto
+        override suspend fun eliminar(id: Long) = Unit
 
         override suspend fun listar(): List<Producto> {
             errorAlListar?.let { throw it }

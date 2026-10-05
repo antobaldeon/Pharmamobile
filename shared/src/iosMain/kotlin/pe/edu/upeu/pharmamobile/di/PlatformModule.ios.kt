@@ -12,3 +12,4 @@ actual val platformModule: Module = module {
 }
 
 fun initKoinIos() = initKoin()
+actual val backendBaseUrl: String = "http://localhost:8080/"

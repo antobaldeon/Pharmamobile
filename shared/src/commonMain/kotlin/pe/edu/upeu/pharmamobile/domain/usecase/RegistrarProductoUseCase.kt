@@ -6,7 +6,7 @@ import pe.edu.upeu.pharmamobile.domain.repository.ProductoRepository
 class RegistrarProductoUseCase(
     private val productoRepository: ProductoRepository
 ) {
-    suspend operator fun invoke(nombre: String, precioTexto: String, stockTexto: String): Result<Producto> {
+    suspend operator fun invoke(nombre: String, precioTexto: String, stockTexto: String, categoriaId: Long = 1, activo: Boolean = true): Result<Producto> {
         if (nombre.isBlank()) return fallo(nombre = "Nombre obligatorio")
 
         val precio = precioTexto.toDoubleOrNull()
@@ -17,9 +17,9 @@ class RegistrarProductoUseCase(
             ?: return fallo(stock = "Stock debe ser un número entero")
         if (stock < 0) return fallo(stock = "Stock no puede ser negativo")
 
-        return runCatching {
+        return resultadoProducto {
             productoRepository.registrar(
-                Producto(id = 0, nombre = nombre.trim(), precio = precio, stock = stock)
+                Producto(id = 0, nombre = nombre.trim(), precio = precio, stock = stock, categoriaId = categoriaId, activo = activo)
             )
         }
     }

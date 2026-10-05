@@ -10,3 +10,4 @@ actual val platformModule: Module = module {
         OkHttp.create()
     }
 }
+actual val backendBaseUrl: String = "http://10.0.2.2:8080/"
