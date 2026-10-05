@@ -46,8 +46,8 @@ import org.koin.compose.KoinContext
 import pe.edu.upeu.pharmamobil.navigation.Screen
 import pe.edu.upeu.pharmamobil.presentation.inicio.InicioScreen
 import pe.edu.upeu.pharmamobil.theme.PharmaMobilTheme
-import pe.edu.upeu.pharmamobile.Domain.presentation.Cliente.ClienteScreen
-import pe.edu.upeu.pharmamobile.Domain.presentation.Pedido.PedidoScreen
+import pe.edu.upeu.pharmamobile.domain.presentation.Cliente.ClienteScreen
+import pe.edu.upeu.pharmamobile.domain.presentation.Pedido.PedidoScreen
 import pe.edu.upeu.pharmamobile.presentation.producto.ProductoScreen
 
 // AGREGADO (Reto 02): Define el patrón de navegación según el ancho disponible.

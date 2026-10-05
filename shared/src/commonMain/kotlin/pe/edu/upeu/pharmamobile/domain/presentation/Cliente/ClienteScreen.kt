@@ -1,4 +1,4 @@
-package pe.edu.upeu.pharmamobile.Domain.presentation.Cliente
+package pe.edu.upeu.pharmamobile.domain.presentation.Cliente
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import pe.edu.upeu.pharmamobile.domain.model.Cliente
 import kotlin.random.Random
-import kotlin.time.Clock
 
 
 @Composable

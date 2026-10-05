@@ -1,0 +1,46 @@
+--------- beginning of main
+10-02 04:11:39.475  4877  4877 I System.out: KTOR: REQUEST: http://10.0.2.2:8080/api/v1/productos?pagina=0&tamanio=20&ordenarPor=id&direccion=asc
+10-02 04:11:39.475  4877  4877 I System.out: METHOD: GET
+10-02 04:11:39.475  4877  4877 I System.out: COMMON HEADERS
+10-02 04:11:39.475  4877  4877 I System.out: -> Accept: application/json
+10-02 04:11:39.475  4877  4877 I System.out: -> Accept-Charset: UTF-8
+10-02 04:11:39.475  4877  4877 I System.out: -> Content-Type: application/json
+10-02 04:11:39.476  4877  4877 I System.out: CONTENT HEADERS
+10-02 04:11:39.476  4877  4877 I System.out: -> Content-Length: 0
+10-02 04:11:40.044  4877  4877 I System.out: KTOR: REQUEST http://10.0.2.2:8080/api/v1/productos?pagina=0&tamanio=20&ordenarPor=id&direccion=asc failed with exception: java.net.ConnectException: Failed to connect to /10.0.2.2:8080
+10-02 04:11:44.069  4877  4877 I System.out: KTOR: REQUEST: http://10.0.2.2:8080/api/v1/productos?pagina=0&tamanio=20&ordenarPor=id&direccion=asc
+10-02 04:11:44.069  4877  4877 I System.out: METHOD: GET
+10-02 04:11:44.069  4877  4877 I System.out: COMMON HEADERS
+10-02 04:11:44.069  4877  4877 I System.out: -> Accept: application/json
+10-02 04:11:44.069  4877  4877 I System.out: -> Accept-Charset: UTF-8
+10-02 04:11:44.069  4877  4877 I System.out: -> Content-Type: application/json
+10-02 04:11:44.069  4877  4877 I System.out: CONTENT HEADERS
+10-02 04:11:44.069  4877  4877 I System.out: -> Content-Length: 0
+10-02 04:11:44.096  4877  4877 I System.out: KTOR: REQUEST http://10.0.2.2:8080/api/v1/productos?pagina=0&tamanio=20&ordenarPor=id&direccion=asc failed with exception: java.net.ConnectException: Failed to connect to /10.0.2.2:8080
+10-02 04:11:45.099  4877  4877 I System.out: KTOR: REQUEST: http://10.0.2.2:8080/api/v1/productos?pagina=0&tamanio=20&ordenarPor=id&direccion=asc
+10-02 04:11:45.099  4877  4877 I System.out: METHOD: GET
+10-02 04:11:45.099  4877  4877 I System.out: COMMON HEADERS
+10-02 04:11:45.099  4877  4877 I System.out: -> Accept: application/json
+10-02 04:11:45.099  4877  4877 I System.out: -> Accept-Charset: UTF-8
+10-02 04:11:45.099  4877  4877 I System.out: -> Content-Type: application/json
+10-02 04:11:45.099  4877  4877 I System.out: CONTENT HEADERS
+10-02 04:11:45.099  4877  4877 I System.out: -> Content-Length: 0
+10-02 04:11:45.162  4877  4877 I System.out: KTOR: REQUEST http://10.0.2.2:8080/api/v1/productos?pagina=0&tamanio=20&ordenarPor=id&direccion=asc failed with exception: java.net.ConnectException: Failed to connect to /10.0.2.2:8080
+10-02 04:12:19.395  4877  4877 I System.out: KTOR: REQUEST: http://10.0.2.2:8080/api/v1/productos?pagina=0&tamanio=20&ordenarPor=id&direccion=asc
+10-02 04:12:19.395  4877  4877 I System.out: METHOD: GET
+10-02 04:12:19.395  4877  4877 I System.out: COMMON HEADERS
+10-02 04:12:19.395  4877  4877 I System.out: -> Accept: application/json
+10-02 04:12:19.395  4877  4877 I System.out: -> Accept-Charset: UTF-8
+10-02 04:12:19.395  4877  4877 I System.out: -> Content-Type: application/json
+10-02 04:12:19.395  4877  4877 I System.out: CONTENT HEADERS
+10-02 04:12:19.395  4877  4877 I System.out: -> Content-Length: 0
+10-02 04:12:20.308  4877  4877 I System.out: KTOR: RESPONSE: 200 
+10-02 04:12:20.309  4877  4877 I System.out: METHOD: GET
+10-02 04:12:20.309  4877  4877 I System.out: FROM: http://10.0.2.2:8080/api/v1/productos?pagina=0&tamanio=20&ordenarPor=id&direccion=asc
+10-02 04:12:20.309  4877  4877 I System.out: COMMON HEADERS
+10-02 04:12:20.309  4877  4877 I System.out: -> connection: keep-alive
+10-02 04:12:20.309  4877  4877 I System.out: -> content-type: application/json
+10-02 04:12:20.309  4877  4877 I System.out: -> date: Fri, 02 Oct 2026 04:12:20 GMT
+10-02 04:12:20.309  4877  4877 I System.out: -> keep-alive: timeout=60
+10-02 04:12:20.311  4877  4877 I System.out: -> transfer-encoding: chunked
+10-02 04:12:20.311  4877  4877 I System.out: -> vary: Origin; Access-Control-Request-Method; Access-Control-Request-Headers

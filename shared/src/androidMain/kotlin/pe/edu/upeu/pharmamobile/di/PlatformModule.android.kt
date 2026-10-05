@@ -1,6 +1,13 @@
 package pe.edu.upeu.pharmamobile.di
 
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.okhttp.OkHttp
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-actual val platformModule: Module = module { }
+actual val platformModule: Module = module {
+    single<HttpClientEngine> {
+        OkHttp.create()
+    }
+}
+actual val backendBaseUrl: String = "http://10.0.2.2:8080/"

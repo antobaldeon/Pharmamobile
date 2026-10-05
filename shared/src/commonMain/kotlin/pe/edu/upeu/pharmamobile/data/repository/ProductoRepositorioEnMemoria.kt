@@ -24,4 +24,14 @@ class ProductoRepositorioEnMemoria : ProductoRepository {
         delay(500)
         return productos.toList()
     }
+    override suspend fun obtener(id: Long): Producto = productos.first { it.id == id }
+    override suspend fun actualizar(producto: Producto): Producto {
+        val index = productos.indexOfFirst { it.id == producto.id }
+        require(index >= 0) { "Producto no encontrado" }
+        productos[index] = producto
+        return producto
+    }
+    override suspend fun eliminar(id: Long) {
+        require(productos.removeAll { it.id == id }) { "Producto no encontrado" }
+    }
 }

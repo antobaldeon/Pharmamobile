@@ -24,4 +24,13 @@ class ProductRepositoryTest {
         assertEquals(6, producto.id)
         assertEquals(6, repository.listar().size)
     }
+    @Test
+    fun actualizarYEliminarReflejanLosCambios() = runTest {
+        val repository = ProductoRepositorioEnMemoria()
+        val original = repository.obtener(1)
+        repository.actualizar(original.copy(nombre = "Producto actualizado"))
+        assertEquals("Producto actualizado", repository.obtener(1).nombre)
+        repository.eliminar(1)
+        assertEquals(false, repository.listar().any { it.id == 1L })
+    }
 }
