@@ -12,6 +12,7 @@ import io.ktor.client.HttpClient
 import pe.edu.upeu.pharmamobile.data.remote.crearHttpClient
 import pe.edu.upeu.pharmamobile.data.remote.ProductoApi
 import pe.edu.upeu.pharmamobile.data.repository.ProductoRepositoryImpl
+import pe.edu.upeu.pharmamobile.presentation.detalle.DetalleProductoViewModel
 
 val dataModule = module {
     single<HttpClient> {
@@ -39,6 +40,7 @@ val domainModule = module {
 
 val presentationModule = module {
     viewModelOf(::ProductoViewModel)
+    viewModelOf(::DetalleProductoViewModel)
 }
 
 expect val backendBaseUrl: String
@@ -48,3 +50,6 @@ fun initKoin(config: KoinApplication.() -> Unit = {}) = startKoin {
     config()
     modules(dataModule, domainModule, presentationModule, platformModule)
 }
+
+// Punto de entrada estable para Swift: AppModuleKt.initKoinIos().
+fun initKoinIos() = initKoin()
