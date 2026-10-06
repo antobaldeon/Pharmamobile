@@ -1,0 +1,17 @@
+package pe.edu.upeu.pharmamobile.platform
+
+import platform.Foundation.NSLocale
+import platform.Foundation.NSNumber
+import platform.Foundation.NSNumberFormatter
+import platform.Foundation.NSNumberFormatterCurrencyStyle
+
+actual fun formatearSoles(valor: Double): String {
+    val formateador = NSNumberFormatter().apply {
+        numberStyle = NSNumberFormatterCurrencyStyle
+        locale = NSLocale("es_PE")
+        currencyCode = "PEN"
+    }
+
+    return formateador.stringFromNumber(NSNumber(valor))
+        ?: "S/ $valor"
+}

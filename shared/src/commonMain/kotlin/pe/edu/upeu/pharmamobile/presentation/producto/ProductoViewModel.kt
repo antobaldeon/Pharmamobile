@@ -92,8 +92,15 @@ class ProductoViewModel(
     fun recargarProductos() {
         if (_uiState.value.fase != FaseProductos.Cargando && _uiState.value.operacion !is OperacionProducto.EnCurso) listarProductos()
     }
-    private fun faseDe(productos: List<Producto>): FaseProductos = if (productos.isEmpty()) FaseProductos.SinProductos else FaseProductos.ConProductos(productos)
-    private fun listarProductos() {
+    private fun faseDe(productos: List<Producto>): FaseProductos =
+        if (productos.isEmpty()) {
+            FaseProductos.SinProductos
+        } else {
+            FaseProductos.ConProductos(
+                productos.map { it.toUi() }
+            )
+        }
+       private fun listarProductos() {
         viewModelScope.launch {
             _uiState.update { it.copy(fase = FaseProductos.Cargando) }
             ListarProductosUseCase(productoRepository)().onSuccess { productos ->

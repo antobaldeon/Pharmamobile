@@ -46,6 +46,8 @@ kotlin {
             implementation(libs.compose.uiTooling)
             implementation(libs.firebase.database)
             implementation(libs.ktor.client.okhttp)
+
+            implementation(libs.koin.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
