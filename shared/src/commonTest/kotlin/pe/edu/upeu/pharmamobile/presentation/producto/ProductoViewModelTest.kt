@@ -51,7 +51,7 @@ class ProductoViewModelTest {
         advanceUntilIdle()
 
         val fase = assertIs<FaseProductos.ConProductos>(viewModel.uiState.value.fase)
-        assertEquals(productos, fase.productos)
+        assertEquals(productos, fase.productos.map { it.producto })
     }
 
     @Test
@@ -83,7 +83,7 @@ class ProductoViewModelTest {
     @Test
     fun errorDelServidorApareceDebajoDelCampo() = runTest {
         val error = pe.edu.upeu.pharmamobile.domain.error.ErrorApiException(
-            pe.edu.upeu.pharmamobile.domain.error.ErrorApi.Validacion(mapOf("nombre" to "Mínimo 3 caracteres"))
+            pe.edu.upeu.pharmamobile.domain.error.ErrorApi.Validacion(mapOf("nombre" to "MÃ­nimo 3 caracteres"))
         )
         val viewModel = crearViewModel(RepositorioFalso(errorAlRegistrar = error))
         advanceUntilIdle()
@@ -92,7 +92,7 @@ class ProductoViewModelTest {
         viewModel.actualizarStock("2")
         viewModel.registrarProducto()
         advanceUntilIdle()
-        assertEquals("Mínimo 3 caracteres", viewModel.uiState.value.errorNombre)
+        assertEquals("MÃ­nimo 3 caracteres", viewModel.uiState.value.errorNombre)
         assertIs<OperacionProducto.Inactiva>(viewModel.uiState.value.operacion)
         assertIs<FaseProductos.SinProductos>(viewModel.uiState.value.fase)
     }

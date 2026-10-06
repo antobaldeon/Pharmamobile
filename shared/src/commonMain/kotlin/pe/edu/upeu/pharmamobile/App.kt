@@ -1,5 +1,6 @@
 package pe.edu.upeu.pharmamobil
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -8,7 +9,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Medication
@@ -16,20 +20,26 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,17 +60,16 @@ import pe.edu.upeu.pharmamobile.domain.presentation.Cliente.ClienteScreen
 import pe.edu.upeu.pharmamobile.domain.presentation.Pedido.PedidoScreen
 import pe.edu.upeu.pharmamobile.presentation.producto.ProductoScreen
 
-// AGREGADO (Reto 02): Define el patrón de navegación según el ancho disponible.
+// Define el patrón de navegación según el ancho disponible.
 private enum class NavigationLayout { Compacto, Mediano, Amplio }
 
-// AGREGADO (Reto 02): Centraliza los cuatro destinos para reutilizarlos en Drawer y NavigationRail.
+// Centraliza los cuatro destinos para reutilizarlos en Drawer y NavigationRail.
 private data class NavigationDestination(
     val screen: Screen,
     val title: String,
     val icon: ImageVector
 )
 
-// AGREGADO (Reto 02): Evita repetir los datos de cada destino en los distintos tipos de navegación.
 private val navigationDestinations = listOf(
     NavigationDestination(Screen.Inicio, "Inicio", Icons.Default.Home),
     NavigationDestination(Screen.Productos, "Productos", Icons.Default.Medication),
@@ -84,7 +93,7 @@ private fun PharmaMobilApp() {
     val scope = rememberCoroutineScope()
 
     PharmaMobilTheme(darkTheme = darkTheme) {
-        // AGREGADO (Reto 02): Selecciona Drawer modal, Rail o Drawer permanente por breakpoint.
+        // Selecciona Drawer modal, Rail o Drawer permanente por breakpoint.
         BoxWithConstraints {
             val navigationLayout = when {
                 maxWidth < 600.dp -> NavigationLayout.Compacto
@@ -117,14 +126,25 @@ private fun PharmaMobilApp() {
                 }
 
                 NavigationLayout.Mediano -> Row(Modifier.fillMaxSize()) {
-                    // AGREGADO (Reto 02): NavigationRail mejora el acceso a destinos en tablets.
-                    NavigationRail(modifier = Modifier.fillMaxHeight()) {
+                    NavigationRail(
+                        modifier = Modifier.fillMaxHeight(),
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ) {
+                        Spacer(Modifier.height(12.dp))
                         navigationDestinations.forEach { destination ->
                             NavigationRailItem(
                                 selected = pantallaActual == destination.screen,
                                 onClick = { pantallaActual = destination.screen },
                                 icon = { Icon(destination.icon, contentDescription = destination.title) },
-                                label = { Text(destination.title) }
+                                label = { Text(destination.title) },
+                                colors = NavigationRailItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                    unselectedIconColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                                    unselectedTextColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
+                                )
                             )
                         }
                     }
@@ -135,7 +155,6 @@ private fun PharmaMobilApp() {
                 }
 
                 NavigationLayout.Amplio -> PermanentNavigationDrawer(
-                    // AGREGADO (Reto 02): El Drawer permanente aprovecha el espacio de escritorio/foldables.
                     drawerContent = {
                         PermanentDrawerSheet {
                             DrawerNavigationContent(
@@ -157,7 +176,7 @@ private fun PharmaMobilApp() {
     }
 }
 
-// MODIFICADO (Reto 02): Reutiliza la misma estructura visual en los tres patrones adaptativos.
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PharmaScaffold(
     modifier: Modifier,
@@ -166,9 +185,15 @@ private fun PharmaScaffold(
 ) {
     Scaffold(
         modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text(tituloPantalla(pantallaActual)) },
+                title = { Text(tituloPantalla(pantallaActual), style = MaterialTheme.typography.titleLarge) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 navigationIcon = {
                     if (onOpenDrawer != null) {
                         IconButton(onClick = onOpenDrawer) {
@@ -190,7 +215,7 @@ private fun PharmaScaffold(
     }
 }
 
-// MODIFICADO (Reto 02): El contenido se comparte entre Drawer modal y permanente.
+// El contenido se comparte entre Drawer modal y permanente.
 @Composable
 private fun DrawerNavigationContent(
     pantallaActual: Screen,
@@ -198,31 +223,62 @@ private fun DrawerNavigationContent(
     onDarkThemeChange: (Boolean) -> Unit,
     onScreenSelected: (Screen) -> Unit
 ) {
-    DrawerHeader()
-    navigationDestinations.forEach { destination ->
-        NavigationDrawerItem(
-            label = { Text(destination.title) },
-            selected = pantallaActual == destination.screen,
-            onClick = { onScreenSelected(destination.screen) },
-            icon = { Icon(destination.icon, contentDescription = destination.title) }
-        )
-    }
-    Spacer(modifier = Modifier.padding(8.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text("Modo oscuro")
-        Switch(checked = darkTheme, onCheckedChange = onDarkThemeChange)
+    // Scroll por si el menú no cabe en pantallas bajas / landscape
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+        DrawerHeader()
+        Spacer(Modifier.height(12.dp))
+        navigationDestinations.forEach { destination ->
+            NavigationDrawerItem(
+                label = { Text(destination.title) },
+                selected = pantallaActual == destination.screen,
+                onClick = { onScreenSelected(destination.screen) },
+                icon = { Icon(destination.icon, contentDescription = destination.title) },
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
+                colors = NavigationDrawerItemDefaults.colors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 20.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Modo oscuro", style = MaterialTheme.typography.bodyMedium)
+            Switch(
+                checked = darkTheme,
+                onCheckedChange = onDarkThemeChange,
+                colors = SwitchDefaults.colors(
+                    checkedTrackColor = MaterialTheme.colorScheme.primary,
+                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
     }
 }
 
 @Composable
 private fun DrawerHeader() {
-    Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
-        Text("PharmaMobil", style = MaterialTheme.typography.headlineSmall)
-        Text("Gestión farmacéutica", style = MaterialTheme.typography.bodyMedium)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(horizontal = 24.dp, vertical = 32.dp)
+    ) {
+        Text(
+            "PharmaMobil",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        Text(
+            "Gestión farmacéutica",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f)
+        )
     }
 }
 
