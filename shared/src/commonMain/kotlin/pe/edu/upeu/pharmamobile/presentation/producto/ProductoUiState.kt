@@ -11,7 +11,7 @@ enum class FiltroProducto(val titulo: String) {
 sealed interface FaseProductos {
     data object Cargando : FaseProductos
     data object SinProductos : FaseProductos
-    data class ConProductos(val productos: List<Producto>) : FaseProductos
+    data class ConProductos(val productos: List<ProductoUi>) : FaseProductos
     data class Error(val mensaje: String) : FaseProductos
 }
 
