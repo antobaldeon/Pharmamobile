@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import pe.edu.upeu.pharmamobile.presentation.acerca.AcercaScreen
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.Menu
@@ -60,10 +62,10 @@ import pe.edu.upeu.pharmamobile.domain.presentation.Cliente.ClienteScreen
 import pe.edu.upeu.pharmamobile.domain.presentation.Pedido.PedidoScreen
 import pe.edu.upeu.pharmamobile.presentation.producto.ProductoScreen
 
-// Define el patrón de navegación según el ancho disponible.
+// Define el patrÃ³n de navegaciÃ³n segÃºn el ancho disponible.
 private enum class NavigationLayout { Compacto, Mediano, Amplio }
 
-// Centraliza los cuatro destinos para reutilizarlos en Drawer y NavigationRail.
+// Centraliza los destinos para reutilizarlos en Drawer y NavigationRail.
 private data class NavigationDestination(
     val screen: Screen,
     val title: String,
@@ -74,7 +76,8 @@ private val navigationDestinations = listOf(
     NavigationDestination(Screen.Inicio, "Inicio", Icons.Default.Home),
     NavigationDestination(Screen.Productos, "Productos", Icons.Default.Medication),
     NavigationDestination(Screen.Clientes, "Clientes", Icons.Default.Person),
-    NavigationDestination(Screen.Pedidos, "Pedidos", Icons.Default.ShoppingCart)
+    NavigationDestination(Screen.Pedidos, "Pedidos", Icons.Default.ShoppingCart),
+    NavigationDestination(Screen.Acerca, "Acerca de", Icons.Default.Info)
 )
 
 @Composable
@@ -197,7 +200,7 @@ private fun PharmaScaffold(
                 navigationIcon = {
                     if (onOpenDrawer != null) {
                         IconButton(onClick = onOpenDrawer) {
-                            Icon(Icons.Default.Menu, contentDescription = "Abrir menú")
+                            Icon(Icons.Default.Menu, contentDescription = "Abrir menÃº")
                         }
                     }
                 }
@@ -210,6 +213,7 @@ private fun PharmaScaffold(
                 Screen.Productos -> ProductoScreen()
                 Screen.Clientes -> ClienteScreen()
                 Screen.Pedidos -> PedidoScreen()
+                Screen.Acerca -> AcercaScreen()
             }
         }
     }
@@ -223,7 +227,7 @@ private fun DrawerNavigationContent(
     onDarkThemeChange: (Boolean) -> Unit,
     onScreenSelected: (Screen) -> Unit
 ) {
-    // Scroll por si el menú no cabe en pantallas bajas / landscape
+    // Scroll por si el menÃº no cabe en pantallas bajas / landscape
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         DrawerHeader()
         Spacer(Modifier.height(12.dp))
@@ -275,7 +279,7 @@ private fun DrawerHeader() {
             color = MaterialTheme.colorScheme.onPrimary
         )
         Text(
-            "Gestión farmacéutica",
+            "GestiÃ³n farmacÃ©utica",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f)
         )
@@ -287,4 +291,5 @@ private fun tituloPantalla(screen: Screen): String = when (screen) {
     Screen.Productos -> "Productos"
     Screen.Clientes -> "Clientes"
     Screen.Pedidos -> "Pedidos"
+    Screen.Acerca -> "Acerca de"
 }

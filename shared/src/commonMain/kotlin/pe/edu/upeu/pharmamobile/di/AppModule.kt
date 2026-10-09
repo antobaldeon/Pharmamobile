@@ -51,5 +51,4 @@ fun initKoin(config: KoinApplication.() -> Unit = {}) = startKoin {
     modules(dataModule, domainModule, presentationModule, platformModule)
 }
 
-// Punto de entrada estable para Swift: AppModuleKt.initKoinIos().
 fun initKoinIos() = initKoin()
