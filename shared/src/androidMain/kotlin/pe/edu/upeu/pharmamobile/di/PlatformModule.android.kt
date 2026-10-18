@@ -9,6 +9,11 @@ import pe.edu.upeu.pharmamobile.domain.platform.Compartidor
 import pe.edu.upeu.pharmamobile.platform.CompartidorAndroid
 
 actual val platformModule: Module = module {
+    // [Sesion 10 | Plataforma] Inyecta almacenamiento seguro y modo de depuracion.
+    single<pe.edu.upeu.pharmamobile.data.local.AlmacenSeguro> {
+        pe.edu.upeu.pharmamobile.data.local.AlmacenSeguroAndroid(androidContext())
+    }
+    single { ConfiguracionDepuracion((androidContext().applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0) }
     single<HttpClientEngine> {
         OkHttp.create()
     }

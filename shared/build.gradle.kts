@@ -47,6 +47,8 @@ kotlin {
             implementation(libs.firebase.database)
             implementation(libs.ktor.client.okhttp)
 
+            // [Sesion 10 | Android] Guarda JWT cifrado.
+            implementation(libs.androidx.security.crypto)
             implementation(libs.koin.android)
         }
         iosMain.dependencies {
@@ -68,6 +70,8 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             //recien agregados
+            // [Sesion 10 | Ktor] Adjunta Bearer automaticamente.
+            implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
@@ -76,6 +80,8 @@ kotlin {
         commonTest.dependencies {
             // AGREGADO (Reto 02): Habilita runTest en las pruebas de repositorio existentes.
             implementation(libs.kotlinx.coroutines.test)
+            // [Sesion 10 | Pruebas] Simula respuestas de autenticacion.
+            implementation(libs.ktor.client.mock)
             implementation(libs.kotlin.test)
         }
     }

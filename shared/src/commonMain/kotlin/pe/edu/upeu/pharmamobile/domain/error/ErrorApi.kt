@@ -1,6 +1,9 @@
 package pe.edu.upeu.pharmamobile.domain.error
 
 sealed interface ErrorApi {
+    // [Sesion 10 | HTTP] Mantiene separados los codigos 401 y 403.
+    data object SesionExpirada : ErrorApi
+    data object SinPermiso : ErrorApi
     data class Validacion(val porCampo: Map<String, String>) : ErrorApi
     data object NoEncontrado : ErrorApi
     data class Conflicto(val mensaje: String) : ErrorApi
@@ -11,6 +14,8 @@ sealed interface ErrorApi {
 
 class ErrorApiException(val error: ErrorApi) : Exception(when (error) {
     is ErrorApi.Validacion -> error.porCampo.values.firstOrNull() ?: "Revisa los datos del producto"
+    ErrorApi.SesionExpirada -> "Tu sesión expiró. Inicia sesión nuevamente"
+    ErrorApi.SinPermiso -> "No tienes permiso para esta operación"
     ErrorApi.NoEncontrado -> "Producto o categorÃ­a no encontrados"
     is ErrorApi.Conflicto -> error.mensaje
     ErrorApi.Servidor -> "Error del servidor"

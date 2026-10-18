@@ -36,11 +36,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
+import pe.edu.upeu.pharmamobile.data.local.GestorSesion
 import org.koin.compose.viewmodel.koinViewModel
 import pe.edu.upeu.pharmamobile.domain.model.Producto
 
 @Composable
-fun ProductoScreen(viewModel: ProductoViewModel = koinViewModel()) {
+fun ProductoScreen() {
+    // [Sesion 10 | Permisos] La lectura permanece disponible; alta, edicion y baja requieren escritura.
+    val gestor: GestorSesion = koinInject()
+    val viewModel: ProductoViewModel = koinViewModel(key = "productos-${gestor.ingreso}")
+    val sesion by gestor.sesion.collectAsState()
+    val puedeEscribir = sesion?.puede("CATALOGO_ESCRIBIR") == true
     val uiState by viewModel.uiState.collectAsState()
     var seleccionado by remember { mutableStateOf<ProductoUi?>(null) }
     val detalleViewModel: DetalleProductoViewModel = koinViewModel()
@@ -60,8 +67,8 @@ fun ProductoScreen(viewModel: ProductoViewModel = koinViewModel()) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // ---------- Formulario ----------
-        item {
+        // [Sesion 10 | Permisos] Oculta el formulario a usuarios de solo lectura.
+        if (puedeEscribir) item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
@@ -197,6 +204,7 @@ fun ProductoScreen(viewModel: ProductoViewModel = koinViewModel()) {
                 productos = fase.productos,
                 filtro = uiState.filtroSeleccionado,
                 habilitado = !enCurso,
+                puedeEscribir = puedeEscribir,
                 editar = viewModel::editar,
                 eliminar = viewModel::eliminar,
                 verDetalle = { seleccionado = it }
@@ -231,6 +239,7 @@ private fun LazyListScope.listaProductos(
     productos: List<ProductoUi>,
     filtro: FiltroProducto,
     habilitado: Boolean,
+    puedeEscribir: Boolean,
     editar: (Producto) -> Unit,
     eliminar: (Long) -> Unit,
     verDetalle: (ProductoUi) -> Unit
@@ -290,7 +299,8 @@ private fun LazyListScope.listaProductos(
                 OutlinedButton(onClick = { verDetalle(item) }, enabled = habilitado) {
                     Text("Ver detalle")
                 }
-                Row(
+                // [Sesion 10 | Permisos] Oculta editar y eliminar para el vendedor.
+                if (puedeEscribir) Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {

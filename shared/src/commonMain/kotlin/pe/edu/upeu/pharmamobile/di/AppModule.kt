@@ -1,5 +1,6 @@
 package pe.edu.upeu.pharmamobile.di
 
+import pe.edu.upeu.pharmamobile.presentation.sesion.SesionViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -14,11 +15,20 @@ import pe.edu.upeu.pharmamobile.data.remote.ProductoApi
 import pe.edu.upeu.pharmamobile.data.repository.ProductoRepositoryImpl
 import pe.edu.upeu.pharmamobile.presentation.detalle.DetalleProductoViewModel
 
+// [Sesion 10 | Koin] Comparte el estado de sesion entre HTTP y navegacion.
 val dataModule = module {
+    single { pe.edu.upeu.pharmamobile.data.local.GestorSesion(get()) }
+    single { pe.edu.upeu.pharmamobile.data.remote.AuthApi(get()) }
+    single<pe.edu.upeu.pharmamobile.domain.repository.AuthRepository> {
+        pe.edu.upeu.pharmamobile.data.repository.AuthRepositorioRest(get(), get(), get(), get())
+    }
     single<HttpClient> {
         crearHttpClient(
             engine = get(),
-            baseUrl = backendBaseUrl
+            baseUrl = backendBaseUrl,
+            almacen = get(),
+            gestor = get(),
+            esDepuracion = get<ConfiguracionDepuracion>().activa
         )
     }
 
@@ -32,6 +42,10 @@ val dataModule = module {
 }
 
 val domainModule = module {
+    // [Sesion 10 | Koin] Inyecta las tres operaciones de autenticacion.
+    factory { IniciarSesionUseCase(get()) }
+    factory { RecuperarSesionUseCase(get()) }
+    factory { CerrarSesionUseCase(get()) }
     factory { RegistrarProductoUseCase(get()) }
     factory { ListarProductosUseCase(get()) }
     factory { ActualizarProductoUseCase(get()) }
@@ -39,6 +53,8 @@ val domainModule = module {
 }
 
 val presentationModule = module {
+    // [Sesion 10 | Koin] La puerta de entrada mantiene un ViewModel de sesion.
+    viewModelOf(::SesionViewModel)
     viewModelOf(::ProductoViewModel)
     viewModelOf(::DetalleProductoViewModel)
 }
@@ -52,3 +68,6 @@ fun initKoin(config: KoinApplication.() -> Unit = {}) = startKoin {
 }
 
 fun initKoinIos() = initKoin()
+
+// [Sesion 10 | Configuracion] Cada plataforma decide si habilita el registro de depuracion.
+data class ConfiguracionDepuracion(val activa: Boolean)

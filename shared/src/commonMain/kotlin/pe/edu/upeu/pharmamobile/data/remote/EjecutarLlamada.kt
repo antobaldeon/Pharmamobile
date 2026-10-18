@@ -14,6 +14,9 @@ suspend fun <T> ejecutarLlamada(bloque: suspend () -> T): Result<T> = try {
 } catch (e: ClientRequestException) {
     val cuerpo = try { e.response.body<ErrorResponseDto>() } catch (c: CancellationException) { throw c } catch (_: Exception) { null }
     Result.failure(ErrorApiException(when (e.response.status.value) {
+        // [Sesion 10 | HTTP] El 403 conserva sesion; el cliente central ya procesa el 401.
+        401 -> ErrorApi.SesionExpirada
+        403 -> ErrorApi.SinPermiso
         400 -> ErrorApi.Validacion(cuerpo?.validationErrors.orEmpty())
         404 -> ErrorApi.NoEncontrado
         409 -> ErrorApi.Conflicto(cuerpo?.message ?: "Operación no permitida")
