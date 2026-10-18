@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- [Sesion 10 | Respaldo] Excluye el token en Android 12 y posteriores. -->
+<data-extraction-rules>
+    <cloud-backup><exclude domain="sharedpref" path="sesion_segura.xml" /></cloud-backup>
+    <device-transfer><exclude domain="sharedpref" path="sesion_segura.xml" /></device-transfer>
+</data-extraction-rules>

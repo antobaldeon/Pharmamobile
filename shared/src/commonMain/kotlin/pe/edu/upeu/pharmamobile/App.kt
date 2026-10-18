@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import pe.edu.upeu.pharmamobile.presentation.acerca.AcercaScreen
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.Menu
@@ -41,6 +43,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.key
+import androidx.compose.material3.TextButton
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
+import pe.edu.upeu.pharmamobile.data.local.GestorSesion
+import pe.edu.upeu.pharmamobile.domain.model.Sesion
+import pe.edu.upeu.pharmamobile.presentation.sesion.LoginScreen
+import pe.edu.upeu.pharmamobile.presentation.sesion.SesionViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +62,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.launch
 import org.koin.compose.KoinContext
 import pe.edu.upeu.pharmamobil.navigation.Screen
@@ -60,10 +72,10 @@ import pe.edu.upeu.pharmamobile.domain.presentation.Cliente.ClienteScreen
 import pe.edu.upeu.pharmamobile.domain.presentation.Pedido.PedidoScreen
 import pe.edu.upeu.pharmamobile.presentation.producto.ProductoScreen
 
-// Define el patrón de navegación según el ancho disponible.
+// Define el patrÃ³n de navegaciÃ³n segÃºn el ancho disponible.
 private enum class NavigationLayout { Compacto, Mediano, Amplio }
 
-// Centraliza los cuatro destinos para reutilizarlos en Drawer y NavigationRail.
+// Centraliza los destinos para reutilizarlos en Drawer y NavigationRail.
 private data class NavigationDestination(
     val screen: Screen,
     val title: String,
@@ -74,19 +86,29 @@ private val navigationDestinations = listOf(
     NavigationDestination(Screen.Inicio, "Inicio", Icons.Default.Home),
     NavigationDestination(Screen.Productos, "Productos", Icons.Default.Medication),
     NavigationDestination(Screen.Clientes, "Clientes", Icons.Default.Person),
-    NavigationDestination(Screen.Pedidos, "Pedidos", Icons.Default.ShoppingCart)
+    NavigationDestination(Screen.Pedidos, "Pedidos", Icons.Default.ShoppingCart),
+    NavigationDestination(Screen.Acerca, "Acerca de", Icons.Default.Info)
 )
 
 @Composable
 fun App() {
     KoinContext {
-        PharmaMobilApp()
+        // [Sesion 10 | Navegacion] Descarta el contenido protegido al salir o recibir un 401.
+        val viewModel: SesionViewModel = koinViewModel()
+        val sesion by viewModel.sesion.collectAsState()
+        if (sesion == null) {
+            PharmaMobilTheme(darkTheme = false) { LoginScreen(viewModel) }
+        } else {
+            key(sesion) { PharmaMobilApp(sesion!!, viewModel::salir) }
+        }
     }
 }
 
 @Composable
-private fun PharmaMobilApp() {
-    var pantallaActual by remember { mutableStateOf<Screen>(Screen.Inicio) }
+private fun PharmaMobilApp(sesion: Sesion, onCerrarSesion: () -> Unit) {
+    // [Sesion 10 | Permisos] Todas las variantes del menu usan los mismos destinos autorizados.
+    val destinos = navigationDestinations.filter { destinoPermitido(it.screen, sesion) }
+    var pantallaActual by remember { mutableStateOf<Screen>(Screen.Productos) }
     var darkTheme by remember { mutableStateOf(false) }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -108,6 +130,7 @@ private fun PharmaMobilApp() {
                         ModalDrawerSheet {
                             DrawerNavigationContent(
                                 pantallaActual = pantallaActual,
+                                destinos = destinos,
                                 darkTheme = darkTheme,
                                 onDarkThemeChange = { darkTheme = it },
                                 onScreenSelected = { screen ->
@@ -121,6 +144,8 @@ private fun PharmaMobilApp() {
                     PharmaScaffold(
                         modifier = Modifier.fillMaxSize(),
                         pantallaActual = pantallaActual,
+                        onCerrarSesion = onCerrarSesion,
+                        sesion = sesion,
                         onOpenDrawer = { scope.launch { drawerState.open() } }
                     )
                 }
@@ -132,7 +157,7 @@ private fun PharmaMobilApp() {
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ) {
                         Spacer(Modifier.height(12.dp))
-                        navigationDestinations.forEach { destination ->
+                        destinos.forEach { destination ->
                             NavigationRailItem(
                                 selected = pantallaActual == destination.screen,
                                 onClick = { pantallaActual = destination.screen },
@@ -151,6 +176,8 @@ private fun PharmaMobilApp() {
                     PharmaScaffold(
                         modifier = Modifier.weight(1f),
                         pantallaActual = pantallaActual,
+                        onCerrarSesion = onCerrarSesion,
+                        sesion = sesion,
                     )
                 }
 
@@ -159,6 +186,7 @@ private fun PharmaMobilApp() {
                         PermanentDrawerSheet {
                             DrawerNavigationContent(
                                 pantallaActual = pantallaActual,
+                                destinos = destinos,
                                 darkTheme = darkTheme,
                                 onDarkThemeChange = { darkTheme = it },
                                 onScreenSelected = { pantallaActual = it }
@@ -169,6 +197,8 @@ private fun PharmaMobilApp() {
                     PharmaScaffold(
                         modifier = Modifier.fillMaxSize(),
                         pantallaActual = pantallaActual,
+                        onCerrarSesion = onCerrarSesion,
+                        sesion = sesion,
                     )
                 }
             }
@@ -181,6 +211,8 @@ private fun PharmaMobilApp() {
 private fun PharmaScaffold(
     modifier: Modifier,
     pantallaActual: Screen,
+    onCerrarSesion: () -> Unit,
+    sesion: Sesion,
     onOpenDrawer: (() -> Unit)? = null
 ) {
     Scaffold(
@@ -188,16 +220,29 @@ private fun PharmaScaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text(tituloPantalla(pantallaActual), style = MaterialTheme.typography.titleLarge) },
+                // [Sesion 10 | Bienvenida] Muestra usuario y roles reales en todas las pantallas y tamanos.
+                title = {
+                    Column {
+                        Text("Bienvenido, ${sesion.usuario}", style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text("${tituloPantalla(pantallaActual)} � ${sesion.roles.joinToString(", ").ifBlank { "Sin rol" }}",
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary,
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 ),
+                // [Sesion 10 | Cierre] Accion disponible en los tres tamanos de pantalla.
+                actions = { TextButton(onClick = onCerrarSesion) {
+                    Text("Cerrar sesi�n", color = MaterialTheme.colorScheme.onPrimary)
+                } },
                 navigationIcon = {
                     if (onOpenDrawer != null) {
                         IconButton(onClick = onOpenDrawer) {
-                            Icon(Icons.Default.Menu, contentDescription = "Abrir menú")
+                            Icon(Icons.Default.Menu, contentDescription = "Abrir menÃº")
                         }
                     }
                 }
@@ -210,6 +255,7 @@ private fun PharmaScaffold(
                 Screen.Productos -> ProductoScreen()
                 Screen.Clientes -> ClienteScreen()
                 Screen.Pedidos -> PedidoScreen()
+                Screen.Acerca -> AcercaScreen()
             }
         }
     }
@@ -219,15 +265,16 @@ private fun PharmaScaffold(
 @Composable
 private fun DrawerNavigationContent(
     pantallaActual: Screen,
+    destinos: List<NavigationDestination>,
     darkTheme: Boolean,
     onDarkThemeChange: (Boolean) -> Unit,
     onScreenSelected: (Screen) -> Unit
 ) {
-    // Scroll por si el menú no cabe en pantallas bajas / landscape
+    // Scroll por si el menÃº no cabe en pantallas bajas / landscape
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         DrawerHeader()
         Spacer(Modifier.height(12.dp))
-        navigationDestinations.forEach { destination ->
+        destinos.forEach { destination ->
             NavigationDrawerItem(
                 label = { Text(destination.title) },
                 selected = pantallaActual == destination.screen,
@@ -275,7 +322,7 @@ private fun DrawerHeader() {
             color = MaterialTheme.colorScheme.onPrimary
         )
         Text(
-            "Gestión farmacéutica",
+            "GestiÃ³n farmacÃ©utica",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f)
         )
@@ -287,4 +334,12 @@ private fun tituloPantalla(screen: Screen): String = when (screen) {
     Screen.Productos -> "Productos"
     Screen.Clientes -> "Clientes"
     Screen.Pedidos -> "Pedidos"
+    Screen.Acerca -> "Acerca de"
+}
+// [Sesion 10 | Autorizacion] Oculta clientes y ventas cuando el rol no puede leerlos.
+private fun destinoPermitido(screen: Screen, sesion: Sesion): Boolean = when(screen) {
+    Screen.Productos -> sesion.puede("CATALOGO_LEER")
+    Screen.Clientes -> sesion.puede("CLIENTES_LEER")
+    Screen.Pedidos -> sesion.puede("VENTAS_LEER")
+    else -> true
 }
