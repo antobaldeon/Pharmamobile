@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.sqldelight)
+
 }
 
 kotlin {
@@ -41,6 +43,8 @@ kotlin {
     }
 
     sourceSets {
+        getByName("androidHostTest").dependencies { implementation(libs.sqldelight.jvm) }
+        getByName("androidDeviceTest").dependencies { implementation(libs.androidx.testExt.junit) }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
@@ -50,9 +54,11 @@ kotlin {
             // [Sesion 10 | Android] Guarda JWT cifrado.
             implementation(libs.androidx.security.crypto)
             implementation(libs.koin.android)
+            implementation(libs.sqldelight.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.sqldelight.native)
         }
         commonMain.dependencies {
             // AGREGADO (Reto 02): Soporta el estado y los flujos compartidos del inventario.
@@ -76,6 +82,8 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.logging)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutines)
         }
         commonTest.dependencies {
             // AGREGADO (Reto 02): Habilita runTest en las pruebas de repositorio existentes.
@@ -86,7 +94,13 @@ kotlin {
         }
     }
 }
-
+sqldelight {
+    databases {
+        create("PharmaDb") {
+            packageName.set("pe.edu.upeu.pharmamobile.db")
+        }
+    }
+}
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
 }
@@ -94,4 +108,5 @@ tasks.withType<Test>().configureEach {
     testLogging {
         showStandardStreams = true
     }
+
 }

@@ -13,10 +13,15 @@ class ProductoRepositorioEnMemoria : ProductoRepository {
         Producto(5, "Diclofenaco", 20.00, 3)
     )
 
+    private val cambios = kotlinx.coroutines.flow.MutableStateFlow(productos.toList())
+    override fun observar(): kotlinx.coroutines.flow.Flow<List<Producto>> = cambios
+    override suspend fun sincronizar() = Unit
+
     override suspend fun registrar(producto: Producto): Producto {
         delay(500)
         val productoRegistrado = producto.copy(id = (productos.maxOfOrNull { it.id } ?: 0) + 1)
         productos += productoRegistrado
+        cambios.value = productos.toList()
         return productoRegistrado
     }
 
@@ -29,9 +34,11 @@ class ProductoRepositorioEnMemoria : ProductoRepository {
         val index = productos.indexOfFirst { it.id == producto.id }
         require(index >= 0) { "Producto no encontrado" }
         productos[index] = producto
+        cambios.value = productos.toList()
         return producto
     }
     override suspend fun eliminar(id: Long) {
         require(productos.removeAll { it.id == id }) { "Producto no encontrado" }
+        cambios.value = productos.toList()
     }
 }

@@ -97,4 +97,36 @@ class AuthRepositorioRestTest {
             assertNull(gestor.aviso.value)
         } finally { cliente.close() }
     }
+    @Test fun restauraSesionGuardadaSinRed() = runTest {
+        val driver = crearDriverPruebas()
+        val almacen = AlmacenPrueba("guardado")
+        val local = SesionLocal(pe.edu.upeu.pharmamobile.db.PharmaDb(driver))
+        val sesion = Sesion("guardado", "admin", "Admin", setOf("CATALOGO_ESCRIBIR"))
+        local.guardar(sesion)
+        val gestor = GestorSesion(almacen, local)
+        val motor = MockEngine { throw kotlinx.io.IOException("Sin red") }
+        val cliente = crearHttpClient(motor, "https://backend.test/", almacen, gestor)
+        try {
+            val repository = AuthRepositorioRest(AuthApi(cliente), cliente, almacen, gestor, local)
+            assertEquals(sesion, repository.sesionGuardada())
+            assertEquals(sesion, gestor.sesion.value)
+        } finally { cliente.close(); driver.close() }
+    }
+
+    @Test fun tokenRechazadoNoRestauraPerfilOffline() = runTest {
+        val driver = crearDriverPruebas()
+        val almacen = AlmacenPrueba("rechazado")
+        val local = SesionLocal(pe.edu.upeu.pharmamobile.db.PharmaDb(driver))
+        local.guardar(Sesion("rechazado", "admin", "Admin", setOf("CATALOGO_ESCRIBIR")))
+        val gestor = GestorSesion(almacen, local)
+        val cliente = crearHttpClient(MockEngine { respond("{}", HttpStatusCode.Unauthorized, headers) }, "https://backend.test/", almacen, gestor)
+        try {
+            val repository = AuthRepositorioRest(AuthApi(cliente), cliente, almacen, gestor, local)
+            val error = assertFailsWith<ErrorSesionException> { repository.sesionGuardada() }
+            assertEquals(ErrorSesion.SesionExpirada, error.error)
+            assertNull(almacen.leerToken())
+            assertNull(local.leer("rechazado"))
+            assertNull(gestor.sesion.value)
+        } finally { cliente.close(); driver.close() }
+    }
 }

@@ -35,5 +35,7 @@ data class ProductoUiState(
     val errorPrecio: String? = null,
     val errorStock: String? = null,
     val filtroSeleccionado: FiltroProducto = FiltroProducto.Activos,
-    val mensajeExito: String? = null
+    val mensajeExito: String? = null,
+    val sincronizando: Boolean = false,
+    val avisoRed: String? = null
 )

@@ -15,7 +15,16 @@ class ProductoViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductoUiState())
     val uiState = _uiState.asStateFlow()
-    init { listarProductos() }
+    init {
+        viewModelScope.launch {
+            productoRepository.observar().catch { error ->
+                _uiState.update { it.copy(fase = FaseProductos.Error(error.message ?: "No se pudo leer la base local")) }
+            }.collect { productos ->
+                _uiState.update { it.copy(fase = faseDe(productos)) }
+            }
+        }
+        sincronizar()
+    }
     fun actualizarNombre(valor: String) = _uiState.update { it.copy(nombre = valor, errorNombre = null) }
     fun actualizarPrecio(valor: String) = _uiState.update { it.copy(precio = valor, errorPrecio = null) }
     fun actualizarStock(valor: String) = _uiState.update { it.copy(stock = valor, errorStock = null) }
@@ -54,7 +63,7 @@ class ProductoViewModel(
             }
             resultado.onSuccess {
                 cancelarEdicion()
-                refrescarTrasOperacion(if (editando == null) "Producto registrado correctamente" else "Producto actualizado")
+                refrescarTrasOperacion(if (editando == null) "Producto guardado. Revisa la marca pendiente de sincronización" else "Producto actualizado")
             }.onFailure(::manejarFallo)
         }
     }
@@ -68,13 +77,8 @@ class ProductoViewModel(
             }.onFailure(::manejarFallo)
         }
     }
-    private suspend fun refrescarTrasOperacion(mensaje: String) {
-        ListarProductosUseCase(productoRepository)().onSuccess { productos ->
-            _uiState.update { it.copy(fase = faseDe(productos), operacion = OperacionProducto.Inactiva, mensajeExito = mensaje) }
-        }.onFailure { fallo ->
-            _uiState.update { it.copy(mensajeExito = mensaje) }
-            manejarFallo(fallo)
-        }
+    private fun refrescarTrasOperacion(mensaje: String) {
+        _uiState.update { it.copy(operacion = OperacionProducto.Inactiva, mensajeExito = mensaje) }
     }
     private fun manejarFallo(fallo: Throwable) {
         val validacion = fallo as? ValidacionProductoException
@@ -89,8 +93,23 @@ class ProductoViewModel(
             ) else it.copy(operacion = OperacionProducto.Fallida(fallo.message ?: "No se pudo completar la operación"))
         }
     }
-    fun recargarProductos() {
-        if (_uiState.value.fase != FaseProductos.Cargando && _uiState.value.operacion !is OperacionProducto.EnCurso) listarProductos()
+    fun recargarProductos() = sincronizar()
+    fun sincronizar() {
+        if (_uiState.value.sincronizando) return
+        _uiState.update { it.copy(sincronizando = true, avisoRed = null) }
+        viewModelScope.launch {
+            try {
+                val resultado = resultadoProducto { productoRepository.sincronizar() }
+                _uiState.update { estado -> estado.copy(avisoRed = resultado.exceptionOrNull()?.let { error ->
+                    when ((error as? ErrorApiException)?.error) {
+                        ErrorApi.SinConexion, ErrorApi.TiempoAgotado -> "Sin conexión: mostrando datos guardados"
+                        else -> error.message ?: "No se pudo sincronizar"
+                    }
+                }) }
+            } finally {
+                _uiState.update { it.copy(sincronizando = false) }
+            }
+        }
     }
     private fun faseDe(productos: List<Producto>): FaseProductos =
         if (productos.isEmpty()) {
@@ -100,14 +119,4 @@ class ProductoViewModel(
                 productos.map { it.toUi() }
             )
         }
-       private fun listarProductos() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(fase = FaseProductos.Cargando) }
-            ListarProductosUseCase(productoRepository)().onSuccess { productos ->
-                _uiState.update { it.copy(fase = faseDe(productos)) }
-            }.onFailure { error ->
-                _uiState.update { it.copy(fase = FaseProductos.Error(error.message ?: "No se pudieron cargar los productos")) }
-            }
-        }
-    }
 }

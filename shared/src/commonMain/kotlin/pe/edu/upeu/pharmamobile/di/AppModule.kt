@@ -17,10 +17,10 @@ import pe.edu.upeu.pharmamobile.presentation.detalle.DetalleProductoViewModel
 
 // [Sesion 10 | Koin] Comparte el estado de sesion entre HTTP y navegacion.
 val dataModule = module {
-    single { pe.edu.upeu.pharmamobile.data.local.GestorSesion(get()) }
+    single { pe.edu.upeu.pharmamobile.data.local.GestorSesion(get(), get()) }
     single { pe.edu.upeu.pharmamobile.data.remote.AuthApi(get()) }
     single<pe.edu.upeu.pharmamobile.domain.repository.AuthRepository> {
-        pe.edu.upeu.pharmamobile.data.repository.AuthRepositorioRest(get(), get(), get(), get())
+        pe.edu.upeu.pharmamobile.data.repository.AuthRepositorioRest(get(), get(), get(), get(), get())
     }
     single<HttpClient> {
         crearHttpClient(
@@ -36,8 +36,12 @@ val dataModule = module {
         ProductoApi(get())
     }
 
+    single { pe.edu.upeu.pharmamobile.db.PharmaDb(get<pe.edu.upeu.pharmamobile.data.local.CreadorDeDriver>().crear()) }
+    single { pe.edu.upeu.pharmamobile.data.local.ProductoLocal(get()) }
+    single { pe.edu.upeu.pharmamobile.data.local.SesionLocal(get()) }
+    single { ProductoRepositoryImpl(get()) }
     single<ProductoRepository> {
-        ProductoRepositoryImpl(get())
+        pe.edu.upeu.pharmamobile.data.repository.ProductoRepositorioOffline(get(), get<ProductoRepositoryImpl>())
     }
 }
 

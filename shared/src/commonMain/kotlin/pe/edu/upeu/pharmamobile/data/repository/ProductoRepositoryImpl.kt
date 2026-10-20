@@ -6,6 +6,8 @@ import pe.edu.upeu.pharmamobile.domain.model.Producto
 import pe.edu.upeu.pharmamobile.domain.repository.ProductoRepository
 
 class ProductoRepositoryImpl(private val api: ProductoApi) : ProductoRepository {
+    override fun observar() = kotlinx.coroutines.flow.flow { emit(listar()) }
+    override suspend fun sincronizar() = Unit
     override suspend fun listar(): List<Producto> = ejecutarLlamada {
         val productos = mutableListOf<Producto>()
         var pagina = 0

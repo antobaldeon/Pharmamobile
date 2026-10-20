@@ -137,3 +137,60 @@ sesión y el propósito. Los comentarios anteriores conservan sus etiquetas orig
 ```powershell
 .\gradlew.bat :shared:testAndroidHostTest :shared:compileKotlinIosSimulatorArm64 :shared:compileKotlinIosArm64 :androidApp:assembleDebug
 ```
+
+
+## Persistencia offline-first (sesión 11)
+
+SQLDelight guarda los productos en `pharma.db`. El listado observa exclusivamente
+la base local mediante `Flow`; sincronizar actualiza la base y la interfaz reacciona.
+Se conservan nombre, precio, stock, estado activo y categoría.
+
+Las altas se guardan primero con ID negativo y `pendiente = 1`. Se intenta enviar
+inmediatamente; si la red o el servidor fallan, permanecen en el dispositivo y se
+pueden reintentar con **Sincronizar**. La sincronización sube los pendientes antes
+de descargar todas las páginas del catálogo. Cada alta confirmada reemplaza el
+ID temporal por el ID positivo del servidor, con `pendiente = 0`, en una transacción.
+Un fallo parcial conserva los pendientes restantes y evita reenviar los confirmados.
+Las sincronizaciones y escrituras se serializan con un Mutex.
+
+Los pendientes se pueden editar y eliminar sin conexión. La edición/eliminación de
+productos ya sincronizados requiere conexión. No hay sincronización automática al
+cambiar la conectividad: al recuperar la red se pulsa **Sincronizar**, como indica
+el ciclo de la guía. También se sincroniza al abrir la pantalla y al registrar.
+
+Después de un primer login con red se guarda el perfil sin JWT en SQLite. Si
+`/auth/me` falla por conectividad, se restaura ese perfil usando el token del almacén
+seguro. Un 401 o cerrar sesión elimina token y perfil; un 403 no restaura permisos
+por la vía offline. El servidor sigue validando cada escritura al sincronizar.
+
+### Verificación de la sesión 11
+
+```powershell
+.\gradlew.bat :shared:testAndroidHostTest :androidApp:assembleDebug
+```
+
+Las pruebas de `commonTest` usan una base en memoria por caso, con driver JDBC en
+Android Host, driver Android en dispositivo y driver nativo en iOS.
+El reporte HTML se genera en `shared/build/reports/tests/testAndroidHostTest/index.html`.
+
+Ciclo manual para las evidencias:
+
+1. Encender PharmaSoft, iniciar sesión y sincronizar productos.
+2. Cerrar por completo la app y apagar el backend o activar modo avión.
+3. Reabrir: comprobar listado guardado y aviso de falta de conexión.
+4. Registrar un producto y comprobar la etiqueta de pendiente.
+5. Volver a cerrar y abrir: el pendiente debe conservarse.
+6. Recuperar red/backend y pulsar Sincronizar.
+7. Verificar en Swagger el producto con ID positivo.
+8. Volver a sincronizar y comprobar que no se duplica.
+9. Repetir el listado offline en iOS desde una Mac con Xcode.
+
+Guardar capturas en `docs/captura/sesion11/`. Las capturas y la comprobación en iOS
+requieren ejecución real; no se incluyen evidencias simuladas.
+
+Limitación: una respuesta perdida después de que el servidor acepte un POST puede
+provocar una duplicación al reintentar; resolver esa ventana requiere idempotencia
+en PharmaSoft. No se implementa una cola de actualizaciones o eliminaciones remotas.
+
+Verificación automática: **26 pruebas Android aprobadas**, APK generado y código/pruebas
+iOS compilados. Detalle en [docs/SESION11_VERIFICACION.md](docs/SESION11_VERIFICACION.md).
