@@ -97,6 +97,22 @@ class ProductoViewModelTest {
         assertIs<FaseProductos.SinProductos>(viewModel.uiState.value.fase)
     }
 
+    @Test
+    fun falloDeRedConservaProductosLocalesYMuestraAviso() = runTest {
+        val productos = listOf(Producto(1, "Guardado", 2.0, 4))
+        val viewModel = crearViewModel(RepositorioFalso(
+            productos = productos,
+            errorAlSincronizar = pe.edu.upeu.pharmamobile.domain.error.ErrorApiException(
+                pe.edu.upeu.pharmamobile.domain.error.ErrorApi.SinConexion
+            )
+        ))
+        advanceUntilIdle()
+        val fase = assertIs<FaseProductos.ConProductos>(viewModel.uiState.value.fase)
+        assertEquals(productos, fase.productos.map { it.producto })
+        assertEquals("Sin conexión: mostrando datos guardados", viewModel.uiState.value.avisoRed)
+        assertEquals(false, viewModel.uiState.value.sincronizando)
+    }
+
     private fun crearViewModel(repositorio: ProductoRepository): ProductoViewModel = ProductoViewModel(
         registrarProducto = RegistrarProductoUseCase(repositorio),
         productoRepository = repositorio
@@ -105,8 +121,11 @@ class ProductoViewModelTest {
     private class RepositorioFalso(
         private val productos: List<Producto> = emptyList(),
         private val errorAlListar: Throwable? = null,
-        private val errorAlRegistrar: Throwable? = null
+        private val errorAlRegistrar: Throwable? = null,
+        private val errorAlSincronizar: Throwable? = null
     ) : ProductoRepository {
+        override fun observar() = kotlinx.coroutines.flow.flow { emit(listar()) }
+        override suspend fun sincronizar() { errorAlSincronizar?.let { throw it } }
         var registrosRealizados = 0
             private set
 

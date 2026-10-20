@@ -154,12 +154,16 @@ fun ProductoScreen() {
         item {
             FilledTonalButton(
                 onClick = viewModel::recargarProductos,
-                enabled = uiState.fase != FaseProductos.Cargando && !enCurso,
+                enabled = !uiState.sincronizando && !enCurso,
                 shape = MaterialTheme.shapes.small,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Recargar")
+                Text(if (uiState.sincronizando) "Sincronizando..." else "Sincronizar")
             }
+        }
+
+        uiState.avisoRed?.let { aviso ->
+            item { Text(aviso, color = MaterialTheme.colorScheme.error) }
         }
 
         // ---------- Filtros ----------
@@ -286,6 +290,9 @@ private fun LazyListScope.listaProductos(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                if (producto.pendiente) {
+                    Text("Pendiente de sincronización", color = MaterialTheme.colorScheme.tertiary)
+                }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (producto.activo) {
                         EtiquetaEstado("Activo", MaterialTheme.colorScheme.primaryContainer, MaterialTheme.colorScheme.onPrimaryContainer)

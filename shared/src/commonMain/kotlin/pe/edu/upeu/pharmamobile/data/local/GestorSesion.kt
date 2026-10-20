@@ -3,7 +3,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import pe.edu.upeu.pharmamobile.domain.model.Sesion
 // [Sesion 10 | Estado global] Propaga un 401 de cualquier pantalla hasta la puerta de login.
-class GestorSesion(private val almacen: AlmacenSeguro) {
+class GestorSesion(private val almacen: AlmacenSeguro, private val local: SesionLocal? = null) {
     private val estado = MutableStateFlow<Sesion?>(null)
     val sesion = estado.asStateFlow()
     private val mensaje = MutableStateFlow<String?>(null)
@@ -11,6 +11,6 @@ class GestorSesion(private val almacen: AlmacenSeguro) {
     // [Sesion 10 | Cambio de usuario] Identifica cada ingreso sin usar el token como clave de UI.
     var ingreso: Long = 0
         private set
-    fun activar(sesion: Sesion) { ingreso++; mensaje.value = null; estado.value = sesion }
-    fun cerrar(aviso: String? = null) { almacen.borrarToken(); estado.value = null; mensaje.value = aviso }
+    fun activar(sesion: Sesion) { local?.guardar(sesion); ingreso++; mensaje.value = null; estado.value = sesion }
+    fun cerrar(aviso: String? = null) { almacen.borrarToken(); local?.borrar(); estado.value = null; mensaje.value = aviso }
 }

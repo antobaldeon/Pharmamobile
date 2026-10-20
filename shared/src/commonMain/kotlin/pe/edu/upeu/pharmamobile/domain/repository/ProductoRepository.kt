@@ -3,6 +3,8 @@ package pe.edu.upeu.pharmamobile.domain.repository
 import pe.edu.upeu.pharmamobile.domain.model.Producto
 
 interface ProductoRepository {
+    fun observar(): kotlinx.coroutines.flow.Flow<List<Producto>>
+    suspend fun sincronizar()
     suspend fun registrar(producto: Producto): Producto
     suspend fun obtener(id: Long): Producto
     suspend fun actualizar(producto: Producto): Producto

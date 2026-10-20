@@ -1,0 +1,16 @@
+CREATE TABLE perfil_sesion (
+    id INTEGER NOT NULL PRIMARY KEY CHECK (id = 1),
+    usuario TEXT NOT NULL,
+    nombre TEXT NOT NULL,
+    permisos TEXT NOT NULL,
+    roles TEXT NOT NULL
+);
+
+leerPerfil:
+SELECT * FROM perfil_sesion WHERE id = 1;
+
+guardarPerfil:
+INSERT OR REPLACE INTO perfil_sesion VALUES (1, ?, ?, ?, ?);
+
+borrarPerfil:
+DELETE FROM perfil_sesion;

@@ -11,6 +11,9 @@ import pe.edu.upeu.pharmamobile.platform.CompartidorIos
 import org.koin.dsl.module
 
 actual val platformModule: Module = module {
+    single<pe.edu.upeu.pharmamobile.data.local.CreadorDeDriver> {
+        pe.edu.upeu.pharmamobile.data.local.CreadorDeDriverIos()
+    }
     // [Sesion 10 | Plataforma] Inyecta almacenamiento seguro y modo de depuracion.
     single<pe.edu.upeu.pharmamobile.data.local.AlmacenSeguro> {
         pe.edu.upeu.pharmamobile.data.local.AlmacenSeguroIos()
