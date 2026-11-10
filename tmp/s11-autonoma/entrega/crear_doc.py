@@ -1,0 +1,85 @@
+from pathlib import Path
+from docx import Document
+from docx.shared import Cm,Pt,RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+import json,xml.etree.ElementTree as ET
+D=Document();s=D.sections[0];s.page_width=Cm(21);s.page_height=Cm(29.7);s.top_margin=s.bottom_margin=Cm(1.7);s.left_margin=s.right_margin=Cm(2)
+for n in ['Normal','Title','Heading 1','Heading 2','Caption']:
+ st=D.styles[n];st.font.name='Calibri';st.font.color.rgb=RGBColor(0,0,0)
+D.styles['Normal'].font.size=Pt(10.5);D.styles['Normal'].paragraph_format.space_after=Pt(6)
+D.styles['Title'].font.size=Pt(22)
+for x in D.styles['Title'].element.xpath('./w:pPr/w:pBdr'):x.getparent().remove(x)
+D.core_properties.author='';D.core_properties.title='Actividad autónoma 11 Pruebas y escenarios offline'
+def p(t=''):return D.add_paragraph(t)
+def h(t):D.add_heading(t,1)
+def page():D.add_page_break()
+def photo(path,caption):
+ q=p();q.alignment=WD_ALIGN_PARAGRAPH.CENTER;q.add_run().add_picture(str(path),height=Cm(15.5));p(caption)
+def missing(t):
+ D.add_heading(t,2);p('Estado: pendiente de documentar con ejecución y captura real.');p('Fecha y hora: _____________________  Plataforma: _____________________');p('Resultado observado y estado de SQLite: ______________________________\n________________________________________________________________');p('\n[INSERTAR CAPTURA REAL AQUÍ]\n');p('Conclusión propia: __________________________________________________')
+p0=D.add_paragraph('Pruebas unitarias y escenarios offline en PharmaMobil','Title')
+p('Actividad Autónoma 11 | Desarrollo de Aplicaciones Móviles')
+p('Estudiante: ______________________________ Baldeón')
+p('Integrante adicional: ______________________________________________')
+p('Sesión: 11 | Fecha del informe: 21 de octubre de 2026')
+p('Docente: Mg. Reyna Barreto Benjamin David')
+p('Rama: feature/offline-first-baldeon')
+p('Repositorio: https://github.com/antobaldeon/Pharmamobile/tree/feature/offline-first-baldeon')
+h('1 Objetivo e implementación')
+p('Verificar la estrategia offline first con pruebas comunes, documentar el comportamiento sin red y mostrar la antigüedad de los datos. La base SQLDelight es la fuente de verdad; las altas locales reciben ID negativo y pendiente igual a 1. La sincronización sube antes de descargar y reemplaza cada alta confirmada por el ID del servidor.')
+p('Se implementaron seis pruebas con MockEngine y una base en memoria por prueba. También se agregaron pruebas de migración y antigüedad. El instante de sincronización se guarda en la tabla estado_sincronizacion solo si termina correctamente la descarga; los fallos mantienen la fecha anterior.')
+p('La pantalla muestra Nunca sincronizado o Actualizado hace minutos, horas o días. La migración de versión 1 a 2 conserva los productos y pendientes. Con un perfil previo se permite restaurar la consulta local sin red; la primera autenticación sigue requiriendo conexión.')
+h('2 Estado de validación')
+p('Resultado automático: 38 pruebas aprobadas, sin fallos. APK Android generado. Código y pruebas iOS compilados; la ejecución de iOS requiere una Mac. Las evidencias manuales incorporadas corresponden al estado real del emulador; los escenarios aún no ejecutados se identifican como pendientes.')
+p('Entrega: 26 de octubre de 2026 a las 23:59. Sustentación: 27 de octubre de 2026.')
+page();h('3 Suite de pruebas en commonTest')
+for n,t in enumerate(['Sincronización con red y emisión de todas las páginas del servidor.','Registro sin red conservado como pendiente y emitido por Flow.','Envío al reconectar con confirmación del ID positivo.','La bajada conserva las filas pendientes.','Identificadores locales negativos y remotos positivos sin colisión.','Dos sincronizaciones consecutivas sin duplicación.'],1):p(f'{n}. {t}')
+p('Clase: S11PruebasOfflineTest. Cada caso usa el repositorio HTTP real, MockEngine de Ktor y su propia base en memoria, sin emulador ni conexión de red. Una prueba adicional verifica que el fallo de sincronización no modifique el instante correcto anterior.')
+p('Comando: .\\gradlew.bat :shared:testAndroidHostTest')
+p('Reporte: shared/build/reports/tests/testAndroidHostTest/index.html')
+h('Salida real de la suite requerida')
+log=Path('docs/S11_AUTONOMA_PRUEBAS.txt').read_text(encoding='utf-8-sig')
+for line in log.splitlines():
+ if 'S11PruebasOfflineTest >' in line:p(line.strip())
+p('Salida completa de casos aprobados incluida al final. El registro íntegro de Gradle se conserva en docs/S11_AUTONOMA_PRUEBAS.txt.')
+h('Resumen de ejecución')
+for f in sorted(Path('shared/build/test-results').rglob('TEST-*.xml')):
+ e=ET.parse(f).getroot();p(f"{e.attrib['name'].split('.')[-1]}: {e.attrib['tests']} pruebas, {e.attrib['failures']} fallos.")
+page();h('4 Bitácora E1 Consulta en modo avión')
+p('Fecha de captura: 21 de octubre de 2026. Plataforma: Android, emulador Pixel 9a. Usuario: admin. La barra de estado muestra modo avión y la app informa ausencia de conexión mientras mantiene productos visibles.')
+photo(Path('docs/captura/s11-autonoma/01_estado_actual.png'),'Captura real del listado local y del aviso Sin conexión mostrando datos guardados.')
+data=json.loads(Path('tmp/s11-autonoma/entrega/estado_base.json').read_text(encoding='utf-8'))
+p(f"Estado de SQLite al consultar: {len(data['productos'])} productos y {sum(x[2] for x in data['productos'])} pendientes. Ejemplos: Paracetamol ID 1 y Amoxicilina ID 4.")
+p('Conclusión: el catálogo local continúa visible durante la falta de conexión. La captura acredita lectura offline; completar los pasos exactos y hora de la prueba de cierre y reapertura: ____________________')
+page();h('5 Bitácora E2 y E3')
+missing('E2 Registro sin red')
+p('Pasos requeridos: activar modo avión, registrar un producto y capturar la marca Pendiente de sincronización. Consultar SELECT id, nombre, pendiente FROM producto. Debe existir ID negativo y pendiente igual a 1.')
+missing('E3 Reconexión y envío')
+p('Pasos requeridos: recuperar red, encender PharmaSoft y sincronizar. Capturar el producto sin marca pendiente y el mismo nombre con ID positivo desde Swagger. Si el token venció, iniciar sesión otra vez y reintentar. Una segunda sincronización no debe duplicar el alta confirmada.')
+page();h('6 Bitácora E4 y E5')
+missing('E4 Primera apertura sin red')
+p('Realizar al final: borrar almacenamiento elimina productos, pendientes y sesión. Abrir en modo avión. Se espera el mensaje No hay productos guardados en este dispositivo y Nunca sincronizado, sin error de conexión automático. El primer login necesita red.')
+missing('E5 Sesión expirada sin red')
+p('Iniciar sesión y sincronizar antes de desconectar. Esperar el vencimiento del JWT, cerrar y abrir sin red. Comprobar el listado local. Al reconectar, un 401 debe solicitar login sin borrar los productos. El perfil dev consultado expira tokens en un minuto.')
+p('Análisis a completar: la consulta offline evita solicitar un login imposible sin red; el servidor vuelve a validar los permisos al reconectar. Registrar si este comportamiento ocurrió efectivamente en la prueba.')
+page();h('7 Antigüedad de los datos')
+p('La marca se guarda después de una sincronización completa correcta. Una sincronización fallida no cambia la fecha y el valor permanece después de cerrar la aplicación.')
+photo(Path('docs/captura/s11-autonoma/02_antiguedad_actual.png'),'Captura real de la etiqueta Actualizado hace 22 minutos con modo avión activo.')
+p('Evidencias adicionales pendientes: Nunca sincronizado y datos de más de un día. Para ensayar, adelantar el reloj del emulador sin red y declarar la simulación; restaurar fecha automática antes de reconectar. No se ha modificado el reloj ni la fecha almacenada para este informe.')
+page();h('8 Guion de sustentación de ocho minutos')
+for a,b in [('0 a 1 minuto Autenticación JWT','Usuario admin. Mostrar contraseña incorrecta y después ingreso correcto, sin revelar el token.'),('1 a 3 minutos REST y CRUD','Con admin y backend encendido: listar, crear, actualizar y eliminar un producto de prueba con categoría válida.'),('3 a 5 minutos Estados y errores','Con vendedor, evidenciar restricción de escritura y un 403 en Swagger. Con admin, editar un producto con nombre de dos caracteres para mostrar validación bajo el campo.'),('5 a 7 minutos Persistencia offline','Activar modo avión, mostrar listado y antigüedad, crear pendiente, reconectar y verificar el ID positivo en Swagger. Renovar sesión si el token venció.'),('7 a 8 minutos Multiplataforma','Mostrar Android e iOS ejecutándose con la funcionalidad offline y explicar esquema común y drivers por plataforma.')]:
+ D.add_heading(a,2);p(b)
+h('Preparación y conclusiones')
+p('Preparar backend y base activos, categoría válida, catálogo cargado, sesión inicialmente cerrada, usuarios admin y vendedor, Swagger y simulador iOS. Ensayar con cronómetro y revisar vigencia del token.')
+p('Las pruebas automáticas acreditan el comportamiento del repositorio y la persistencia de la marca de sincronización. Las capturas presentes demuestran consulta local sin red y visualización de antigüedad. Antes de considerar completa la bitácora deben incorporarse las evidencias reales señaladas como pendientes.')
+p('Commits nuevos de la actividad: ________________________________________')
+p('Fuente: Actividad Autónoma 11 Pruebas unitarias y evidencia de escenarios offline, páginas 3 a 7. Código y resultados del proyecto PharmaMobil.')
+page();h('Anexo Salida completa de los casos ejecutados')
+for line in log.splitlines():
+ if ' PASSED' in line:
+  r=p(line.strip()).runs[0];r.font.name='Consolas';r.font.size=Pt(8)
+p('BUILD SUCCESSFUL. Total: 38 pruebas, 0 fallos y 0 errores. El registro íntegro incluye además las tareas de compilación iOS y está disponible en docs/S11_AUTONOMA_PRUEBAS.txt.')
+D.save('output/doc/S11_ActividadAutonoma_Baldeon_Editable.docx')
+print('DOCX READY')
