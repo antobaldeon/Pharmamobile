@@ -1,7 +1,13 @@
 TEAM_ID=
 
 PRODUCT_NAME=PharmaMobil
-PRODUCT_BUNDLE_IDENTIFIER=pe.edu.upeu.pharmamobile.PharmaMobil$(TEAM_ID)
+PRODUCT_BUNDLE_IDENTIFIER=pe.edu.upeu.pharmamobile.PharmaMobil
 
 CURRENT_PROJECT_VERSION=1
-MARKETING_VERSION=1.0
+MARKETING_VERSION=1.0.0
+
+// La URL se compone en Info.plist para que // no sea interpretado como comentario.
+PHARMA_BACKEND_HOST=localhost
+PHARMA_BACKEND_PORT=8080
+
+#include? "Local.xcconfig"

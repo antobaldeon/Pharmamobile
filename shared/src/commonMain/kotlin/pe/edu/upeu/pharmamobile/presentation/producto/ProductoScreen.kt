@@ -67,6 +67,26 @@ fun ProductoScreen() {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        if (uiState.pendientes > 0 || uiState.fallidas > 0) item {
+            Text("Antes de reenviar, verifica en el servidor que el producto no exista. Un envío sin respuesta puede haberse registrado.")
+        }
+        (uiState.fase as? FaseProductos.ConProductos)?.productos?.filter { it.producto.pendiente && it.producto.ultimoError != null }?.forEach { fila ->
+            item {
+                Column {
+                    Text("${fila.producto.nombre}: ${fila.producto.ultimoError}")
+                    Text(if (fila.producto.intentos >= 5) "Envío detenido. Revisa los datos antes de reenviar."
+                        else "Intentos de envío: ${fila.producto.intentos}/5")
+                    if (puedeEscribir) {
+                        OutlinedButton(onClick = { viewModel.editar(fila.producto) }, enabled = !uiState.sincronizando && !enCurso) {
+                            Text("Corregir producto")
+                        }
+                    }
+                    OutlinedButton(onClick = { viewModel.reintentar(fila.producto.id) }, enabled = !uiState.sincronizando) {
+                        Text("Confirmar reenvío de este producto")
+                    }
+                }
+            }
+        }
         // [Sesion 10 | Permisos] Oculta el formulario a usuarios de solo lectura.
         if (puedeEscribir) item {
             Card(
@@ -199,7 +219,7 @@ fun ProductoScreen() {
                 }
             }
             FaseProductos.SinProductos -> item {
-                MensajeVacio("No hay productos registrados")
+                MensajeVacio("No hay productos guardados. Conéctate y pulsa Sincronizar para descargar el catálogo.")
             }
             is FaseProductos.Error -> item {
                 Text("Error: ${fase.mensaje}", color = MaterialTheme.colorScheme.error)
@@ -291,7 +311,10 @@ private fun LazyListScope.listaProductos(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (producto.pendiente) {
+                    Text("ID local provisional: ${producto.id}")
                     Text("Pendiente de sincronización", color = MaterialTheme.colorScheme.tertiary)
+                } else {
+                    Text("ID del servidor: ${producto.id}")
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (producto.activo) {

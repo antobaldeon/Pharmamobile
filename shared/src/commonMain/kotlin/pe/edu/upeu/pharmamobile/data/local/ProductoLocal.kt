@@ -1,5 +1,6 @@
 package pe.edu.upeu.pharmamobile.data.local
 
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
@@ -9,8 +10,11 @@ import pe.edu.upeu.pharmamobile.domain.model.Producto
 
 class ProductoLocal(private val base: PharmaDb, private val dispatcher: CoroutineDispatcher = Dispatchers.Default) {
     private val consultas = base.productoQueries
-    private fun convertir(id: Long, nombre: String, precio: Double, stock: Long, activo: Long, categoriaId: Long, pendiente: Long) =
-        Producto(id, nombre, precio, stock.toInt(), activo == 1L, categoriaId, pendiente == 1L)
+    private fun convertir(id: Long, nombre: String, precio: Double, stock: Long, activo: Long, categoriaId: Long, pendiente: Long, intentos: Long, ultimoError: String?) =
+        Producto(id, nombre, precio, stock.toInt(), activo == 1L, categoriaId, pendiente == 1L, intentos, ultimoError)
+
+    fun observarUltimaSincronizacion() = base.estadoSincronizacionQueries.leerUltima().asFlow().mapToOneOrNull(dispatcher)
+    fun ultimaSincronizacion() = base.estadoSincronizacionQueries.leerUltima().executeAsOneOrNull()
 
     fun observar() = consultas.listarTodos(::convertir).asFlow().mapToList(dispatcher)
     fun listar() = consultas.listarTodos(::convertir).executeAsList()
@@ -33,9 +37,12 @@ class ProductoLocal(private val base: PharmaDb, private val dispatcher: Coroutin
         consultas.borrarPorId(idLocal)
         guardarSincronizado(servidor)
     }
-    fun reemplazarSincronizados(productos: List<Producto>) = base.transaction {
+    fun reemplazarSincronizados(productos: List<Producto>, instanteCorrecto: Long? = null) = base.transaction {
         consultas.borrarSincronizados()
         productos.forEach(::guardarSincronizado)
+        instanteCorrecto?.let { base.estadoSincronizacionQueries.guardarUltima(it) }
     }
+    fun registrarFallo(id: Long, intentos: Long, error: String) { consultas.registrarFallo(intentos, error, id) }
+    fun restablecerEnvio(id: Long) { consultas.restablecerEnvio(id) }
     fun eliminar(id: Long) = consultas.borrarPorId(id)
 }

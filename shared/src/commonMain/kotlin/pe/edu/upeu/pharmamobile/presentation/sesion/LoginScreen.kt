@@ -12,11 +12,18 @@ import androidx.compose.ui.unit.dp
 @Composable fun LoginScreen(viewModel: SesionViewModel) {
     val estado by viewModel.uiState.collectAsState()
     val aviso by viewModel.aviso.collectAsState()
+    val local: pe.edu.upeu.pharmamobile.data.local.ProductoLocal = org.koin.compose.koinInject()
+    val productos by remember(local) { local.observar() }.collectAsState(initial = null)
+    val ultima by remember(local) { local.observarUltimaSincronizacion() }.collectAsState(initial = null)
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(Modifier.widthIn(max = 420.dp).fillMaxWidth().verticalScroll(rememberScrollState()).padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text("PharmaMobil", style = MaterialTheme.typography.headlineLarge)
             Text("Iniciar sesión", style = MaterialTheme.typography.titleLarge)
+            if (productos?.isEmpty() == true && !estado.restaurando) {
+                Text("No hay productos guardados en este dispositivo. Para la primera descarga, inicia sesión con conexión.")
+                pe.edu.upeu.pharmamobile.presentation.producto.AntiguedadDatos(ultima)
+            }
             if(estado.restaurando) {
                 CircularProgressIndicator()
                 Text("Comprobando sesión guardada…")

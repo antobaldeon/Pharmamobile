@@ -1,0 +1,6 @@
+// Copiar como Local.xcconfig en la misma carpeta. Ese archivo no se sube a Git.
+// Sustituir por el Team ID real de Xcode; no es el correo ni la contraseña de Apple.
+TEAM_ID=
+// IPv4 Wi-Fi de la laptop que ejecuta PharmaSoft; revisar con ipconfig.
+PHARMA_BACKEND_HOST=172.17.26.38
+PHARMA_BACKEND_PORT=8080

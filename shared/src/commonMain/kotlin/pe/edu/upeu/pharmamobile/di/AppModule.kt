@@ -17,6 +17,7 @@ import pe.edu.upeu.pharmamobile.presentation.detalle.DetalleProductoViewModel
 
 // [Sesion 10 | Koin] Comparte el estado de sesion entre HTTP y navegacion.
 val dataModule = module {
+    single<pe.edu.upeu.pharmamobile.domain.port.Telemetria> { pe.edu.upeu.pharmamobile.data.firebase.TelemetriaFirebase() }
     single { pe.edu.upeu.pharmamobile.data.local.GestorSesion(get(), get()) }
     single { pe.edu.upeu.pharmamobile.data.remote.AuthApi(get()) }
     single<pe.edu.upeu.pharmamobile.domain.repository.AuthRepository> {
@@ -25,7 +26,7 @@ val dataModule = module {
     single<HttpClient> {
         crearHttpClient(
             engine = get(),
-            baseUrl = backendBaseUrl,
+            baseUrl = getOrNull<ConfiguracionBackend>()?.url ?: backendBaseUrl,
             almacen = get(),
             gestor = get(),
             esDepuracion = get<ConfiguracionDepuracion>().activa
@@ -41,7 +42,7 @@ val dataModule = module {
     single { pe.edu.upeu.pharmamobile.data.local.SesionLocal(get()) }
     single { ProductoRepositoryImpl(get()) }
     single<ProductoRepository> {
-        pe.edu.upeu.pharmamobile.data.repository.ProductoRepositorioOffline(get(), get<ProductoRepositoryImpl>())
+        pe.edu.upeu.pharmamobile.data.repository.ProductoRepositorioOffline(get(), get<ProductoRepositoryImpl>(), telemetria = get())
     }
 }
 
@@ -75,3 +76,5 @@ fun initKoinIos() = initKoin()
 
 // [Sesion 10 | Configuracion] Cada plataforma decide si habilita el registro de depuracion.
 data class ConfiguracionDepuracion(val activa: Boolean)
+
+data class ConfiguracionBackend(val url: String)
