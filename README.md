@@ -1,5 +1,11 @@
 This is a Kotlin Multiplatform project targeting Android, iOS.
 
+## Práctica 14: builds firmados
+
+Configuración local de `keystore.properties`, comandos de firma, red para dispositivos e instalación: [guía de builds](docs/s14/BUILD_E_INSTALACION.md). Cierre de alcance, limitaciones y pruebas: [ficha y matriz](docs/s14/ALCANCE_Y_PRUEBAS.md). El almacén y sus contraseñas no se suben a Git.
+
+Preparación para el iPhone, configuración local de Xcode y límite de compilación desde Windows: [iOS en dispositivo](docs/s14/IOS_EN_IPHONE.md).
+
 * [/iosApp](./iosApp/iosApp) contains an iOS application. Even if youÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢re sharing your UI with Compose Multiplatform,
   you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
 
@@ -194,3 +200,25 @@ en PharmaSoft. No se implementa una cola de actualizaciones o eliminaciones remo
 
 Verificación automática: **26 pruebas Android aprobadas**, APK generado y código/pruebas
 iOS compilados. Detalle en [docs/SESION11_VERIFICACION.md](docs/SESION11_VERIFICACION.md).
+
+
+## Actividad autónoma 11
+
+La última sincronización completa se guarda en la tabla `estado_sincronizacion`
+y se muestra en Productos como Nunca sincronizado o Actualizado hace minutos,
+horas o días. Un fallo no modifica la marca anterior. La migración `1.sqm` lleva
+la base a versión 2 conservando los productos y pendientes existentes.
+
+La clase `S11PruebasOfflineTest` implementa los seis escenarios exigidos con el
+repositorio HTTP real, MockEngine de Ktor y una base en memoria por prueba; agrega
+un caso de fecha conservada ante error. También se prueban el formato de antigüedad
+y la migración de la base. La suite completa contiene 38 pruebas Android.
+
+- [Cómo probar y completar la bitácora](docs/S11_AUTONOMA_COMO_PROBAR.md)
+- [Guion de sustentación de ocho minutos](docs/S11_GUION_SUSTENTACION.md)
+- [Salida completa de las pruebas](docs/S11_AUTONOMA_PRUEBAS.txt)
+
+En una primera apertura sin perfil, se informa que no hay productos locales y que
+el primer login requiere conexión. La aplicación no concede permisos sin autenticar.
+Con un perfil guardado, la consulta offline continúa; un token rechazado por el
+servidor al reconectar elimina la sesión y solicita un nuevo login.

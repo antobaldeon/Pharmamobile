@@ -2,7 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- [Sesion 10 | Desarrollo local] Permite PharmaSoft HTTP en localhost del simulador. -->
+    <key>PharmaBackendURL</key>
+    <string>http://$(PHARMA_BACKEND_HOST):$(PHARMA_BACKEND_PORT)/</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>PharmaMobil necesita conectarse a PharmaSoft en tu red local para iniciar sesión y sincronizar el catálogo.</string>
+    <!-- HTTP local para el backend de laboratorio; no desactiva ATS globalmente. -->
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsLocalNetworking</key><true/>

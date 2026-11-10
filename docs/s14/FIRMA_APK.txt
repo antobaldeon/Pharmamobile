@@ -1,0 +1,22 @@
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::loadLibrary has been called by org.conscrypt.NativeLibraryUtil in an unnamed module (file:/C:/Users/tania/AppData/Local/Android/Sdk/build-tools/36.0.0/lib/apksigner.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=Equipo PharmaMobil, OU=Desarrollo, O=PharmaMobil, L=Lima, C=PE
+Signer #1 certificate SHA-256 digest: e91e0751e2960bd3d6c6c61d09068464f121891968c9e28afee2c82a78574bbb
+Signer #1 certificate SHA-1 digest: e6f47b23f5103868e3c2273407a72d9435279e80
+Signer #1 certificate MD5 digest: e536eb570175630b5394f53864242679
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 963a4546a7c32a67d14819d0acdd43ca93d0b0bfa058cca6b71d9cd255b08af8
+Signer #1 public key SHA-1 digest: c84cdf75d9d57b65840de6724924fe3621a5a444
+Signer #1 public key MD5 digest: b83607a751ef463bb29b852dc44a1bbd

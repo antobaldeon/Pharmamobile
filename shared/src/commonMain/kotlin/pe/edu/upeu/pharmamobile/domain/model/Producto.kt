@@ -7,7 +7,9 @@ data class Producto(
     val stock: Int,
     val activo: Boolean = true,
     val categoriaId: Long = 1,
-    val pendiente: Boolean = false
+    val pendiente: Boolean = false,
+    val intentos: Long = 0,
+    val ultimoError: String? = null
 ) {
     val requiereReposicion: Boolean
         get() = stock <= STOCK_MINIMO

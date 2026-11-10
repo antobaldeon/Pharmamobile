@@ -37,5 +37,8 @@ data class ProductoUiState(
     val filtroSeleccionado: FiltroProducto = FiltroProducto.Activos,
     val mensajeExito: String? = null,
     val sincronizando: Boolean = false,
-    val avisoRed: String? = null
+    val avisoRed: String? = null,
+    val ultimaSincronizacionMillis: Long? = null,
+    val pendientes: Int = 0,
+    val fallidas: Int = 0
 )

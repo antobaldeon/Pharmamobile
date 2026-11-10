@@ -9,6 +9,15 @@ import pe.edu.upeu.pharmamobile.domain.platform.Compartidor
 import pe.edu.upeu.pharmamobile.platform.CompartidorAndroid
 
 actual val platformModule: Module = module {
+    single {
+        val contexto = androidContext()
+        val datos = contexto.packageManager.getApplicationInfo(
+            contexto.packageName, android.content.pm.PackageManager.GET_META_DATA
+        ).metaData
+        ConfiguracionBackend(datos?.getString("pharma.backendUrl") ?: backendBaseUrl)
+    }
+    single { pe.edu.upeu.pharmamobile.data.permiso.GestorPermisosAndroid(androidContext()) }
+    single<pe.edu.upeu.pharmamobile.domain.permiso.GestorPermisos> { get<pe.edu.upeu.pharmamobile.data.permiso.GestorPermisosAndroid>() }
     single<pe.edu.upeu.pharmamobile.data.local.CreadorDeDriver> {
         pe.edu.upeu.pharmamobile.data.local.CreadorDeDriverAndroid(androidContext())
     }

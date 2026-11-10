@@ -118,11 +118,51 @@ class ProductoViewModelTest {
         productoRepository = repositorio
     )
 
+    @Test
+    fun reenvioCorrectoLimpiaElFalloAnterior() = runTest {
+        val repositorio = RepositorioFalso(errorAlSincronizar = IllegalStateException("Categoría no encontrada"))
+        val viewModel = crearViewModel(repositorio)
+        advanceUntilIdle()
+        viewModel.reintentar(-1)
+        advanceUntilIdle()
+        assertIs<OperacionProducto.Fallida>(viewModel.uiState.value.operacion)
+
+        repositorio.errorAlSincronizar = null
+        viewModel.reintentar(-1)
+        advanceUntilIdle()
+
+        assertIs<OperacionProducto.Inactiva>(viewModel.uiState.value.operacion)
+        assertEquals(null, viewModel.uiState.value.avisoRed)
+        assertEquals("Producto reenviado", viewModel.uiState.value.mensajeExito)
+        assertEquals(false, viewModel.uiState.value.sincronizando)
+    }
+
+    @Test
+    fun corregirProductoConservaLosDatosYLimpiaElAvisoAnterior() = runTest {
+        val producto = Producto(-1, "Paracetamol", 2.5, 100, categoriaId = 99, pendiente = true)
+        val viewModel = crearViewModel(RepositorioFalso(
+            productos = listOf(producto), errorAlSincronizar = IllegalStateException("Categoría no encontrada")
+        ))
+        advanceUntilIdle()
+        viewModel.reintentar(-1)
+        advanceUntilIdle()
+        assertIs<OperacionProducto.Fallida>(viewModel.uiState.value.operacion)
+
+        viewModel.editar(producto)
+        advanceUntilIdle()
+
+        assertIs<OperacionProducto.Inactiva>(viewModel.uiState.value.operacion)
+        assertEquals(null, viewModel.uiState.value.avisoRed)
+        assertEquals(producto, viewModel.uiState.value.productoEditando)
+        assertEquals("99", viewModel.uiState.value.categoriaId)
+        assertEquals("Paracetamol", viewModel.uiState.value.nombre)
+    }
+
     private class RepositorioFalso(
         private val productos: List<Producto> = emptyList(),
         private val errorAlListar: Throwable? = null,
         private val errorAlRegistrar: Throwable? = null,
-        private val errorAlSincronizar: Throwable? = null
+        var errorAlSincronizar: Throwable? = null
     ) : ProductoRepository {
         override fun observar() = kotlinx.coroutines.flow.flow { emit(listar()) }
         override suspend fun sincronizar() { errorAlSincronizar?.let { throw it } }

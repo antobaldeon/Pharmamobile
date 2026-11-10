@@ -61,6 +61,7 @@ kotlin {
             implementation(libs.sqldelight.native)
         }
         commonMain.dependencies {
+            implementation("dev.gitlive:firebase-crashlytics:2.7.0")
             // AGREGADO (Reto 02): Soporta el estado y los flujos compartidos del inventario.
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.compose.runtime)
@@ -106,6 +107,7 @@ dependencies {
 }
 tasks.withType<Test>().configureEach {
     testLogging {
+        events("passed", "skipped", "failed")
         showStandardStreams = true
     }
 

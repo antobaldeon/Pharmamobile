@@ -20,7 +20,12 @@ class ProductoViewModel(
             productoRepository.observar().catch { error ->
                 _uiState.update { it.copy(fase = FaseProductos.Error(error.message ?: "No se pudo leer la base local")) }
             }.collect { productos ->
-                _uiState.update { it.copy(fase = faseDe(productos)) }
+                _uiState.update { it.copy(fase = faseDe(productos), pendientes = productos.count { p -> p.pendiente && p.intentos < 5 }, fallidas = productos.count { p -> p.pendiente && p.intentos >= 5 }) }
+            }
+        }
+        viewModelScope.launch {
+            productoRepository.observarUltimaSincronizacion().collect { instante ->
+                _uiState.update { it.copy(ultimaSincronizacionMillis = instante) }
             }
         }
         sincronizar()
@@ -35,7 +40,7 @@ class ProductoViewModel(
         if (_uiState.value.operacion is OperacionProducto.EnCurso) return
         viewModelScope.launch {
             resultadoProducto { productoRepository.obtener(producto.id) }.onSuccess { actual ->
-                _uiState.update { it.copy(productoEditando = actual, nombre = actual.nombre, precio = actual.precio.toString(), stock = actual.stock.toString(), categoriaId = actual.categoriaId.toString(), errorNombre = null, errorPrecio = null, errorStock = null, errorCategoria = null, mensajeExito = null) }
+                _uiState.update { it.copy(productoEditando = actual, nombre = actual.nombre, precio = actual.precio.toString(), stock = actual.stock.toString(), categoriaId = actual.categoriaId.toString(), errorNombre = null, errorPrecio = null, errorStock = null, errorCategoria = null, mensajeExito = null, operacion = OperacionProducto.Inactiva, avisoRed = null) }
             }.onFailure(::manejarFallo)
         }
     }
@@ -78,7 +83,7 @@ class ProductoViewModel(
         }
     }
     private fun refrescarTrasOperacion(mensaje: String) {
-        _uiState.update { it.copy(operacion = OperacionProducto.Inactiva, mensajeExito = mensaje) }
+        _uiState.update { it.copy(operacion = OperacionProducto.Inactiva, mensajeExito = mensaje, avisoRed = null) }
     }
     private fun manejarFallo(fallo: Throwable) {
         val validacion = fallo as? ValidacionProductoException
@@ -93,10 +98,21 @@ class ProductoViewModel(
             ) else it.copy(operacion = OperacionProducto.Fallida(fallo.message ?: "No se pudo completar la operación"))
         }
     }
+    fun reintentar(id: Long) {
+        if (_uiState.value.sincronizando) return
+        _uiState.update { it.copy(sincronizando = true, operacion = OperacionProducto.Inactiva, avisoRed = null, mensajeExito = null) }
+        viewModelScope.launch {
+            try {
+                resultadoProducto { productoRepository.reintentar(id) }
+                    .onSuccess { refrescarTrasOperacion("Producto reenviado") }
+                    .onFailure(::manejarFallo)
+            } finally { _uiState.update { it.copy(sincronizando = false) } }
+        }
+    }
     fun recargarProductos() = sincronizar()
     fun sincronizar() {
         if (_uiState.value.sincronizando) return
-        _uiState.update { it.copy(sincronizando = true, avisoRed = null) }
+        _uiState.update { it.copy(sincronizando = true, avisoRed = null, operacion = OperacionProducto.Inactiva, mensajeExito = null) }
         viewModelScope.launch {
             try {
                 val resultado = resultadoProducto { productoRepository.sincronizar() }

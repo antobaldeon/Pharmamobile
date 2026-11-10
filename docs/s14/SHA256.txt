@@ -1,0 +1,6 @@
+
+Algorithm Hash                                                             Path
+--------- ----                                                             ----
+SHA256    ACD3A53209AD07271220FF1A191DF3DF8F971B8E3B070DCA6D5FCB62E57A9E5D C:\Users\tania\AndroidStudioProjects\PharmaMobil\output\android\s14\Baldeon_ProyectoFinal_Android.apk
+SHA256    F1D893ABFB0B5E8DA4E952890D83C9D0F284C4166B3E11EB8BE27DC32F2D3876 C:\Users\tania\AndroidStudioProjects\PharmaMobil\output\android\s14\Baldeon_ProyectoFinal_Android.aab
+SHA256    A91F82209778A84FAC34496F329BC7EE0F38A052C75057F4EEDB49A3C12B3272 C:\Users\tania\AndroidStudioProjects\PharmaMobil\output\android\s14\mapping.txt

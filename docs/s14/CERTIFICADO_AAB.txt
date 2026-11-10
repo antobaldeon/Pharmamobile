@@ -1,0 +1,23 @@
+Signer #1:
+
+Certificate #1:
+Owner: CN=Equipo PharmaMobil, OU=Desarrollo, O=PharmaMobil, L=Lima, C=PE
+Issuer: CN=Equipo PharmaMobil, OU=Desarrollo, O=PharmaMobil, L=Lima, C=PE
+Serial number: e453dd867d44ad4f
+Valid from: Tue Nov 10 14:36:25 GMT-05:00 2026 until: Sat Mar 28 14:36:25 GMT-05:00 2054
+Certificate fingerprints:
+	 SHA1: E6:F4:7B:23:F5:10:38:68:E3:C2:27:34:07:A7:2D:94:35:27:9E:80
+	 SHA256: E9:1E:07:51:E2:96:0B:D3:D6:C6:C6:1D:09:06:84:64:F1:21:89:19:68:C9:E2:8A:FE:E2:C8:2A:78:57:4B:BB
+Signature algorithm name: SHA384withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions:
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: B2 E0 5E 0C 3C 3F 45 D5   A9 97 A5 85 60 7C 06 9D  ..^.<?E.....`...
+0010: A4 7D E8 14                                        ....
+]
+]

@@ -5,7 +5,9 @@ CREATE TABLE producto (
     stock INTEGER NOT NULL,
     activo INTEGER NOT NULL,
     categoriaId INTEGER NOT NULL,
-    pendiente INTEGER NOT NULL DEFAULT 0
+    pendiente INTEGER NOT NULL DEFAULT 0,
+    intentos INTEGER NOT NULL DEFAULT 0,
+    ultimoError TEXT
 );
 
 listarTodos:
@@ -40,3 +42,8 @@ WHERE pendiente = 0;
 siguienteIdLocal:
 SELECT COALESCE(MIN(id), 0)
 FROM producto;
+registrarFallo:
+UPDATE producto SET intentos = ?, ultimoError = ? WHERE id = ? AND pendiente = 1;
+
+restablecerEnvio:
+UPDATE producto SET intentos = 0, ultimoError = NULL WHERE id = ? AND pendiente = 1;

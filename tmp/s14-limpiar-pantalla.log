@@ -1,0 +1,101 @@
+Calculating task graph as no cached configuration is available for tasks: :androidApp:assembleDebug
+
+> Configure project :shared
+w: Native task 'iosSimulatorArm64Test' is disabled
+Task 'iosSimulatorArm64Test' for target 'ios_simulator_arm64' cannot run on the current host (windows-x86_64).
+Reason: simulator tests require macOS
+Solution: To suppress this warning, add 'kotlin.native.ignoreDisabledTargets=true' to gradle.properties.
+
+
+> Task :shared:androidPreBuild UP-TO-DATE
+> Task :shared:preAndroidMainBuild UP-TO-DATE
+> Task :androidApp:preBuild UP-TO-DATE
+> Task :shared:generateComposeResClass UP-TO-DATE
+> Task :androidApp:preDebugBuild UP-TO-DATE
+> Task :shared:kmpPartiallyResolvedDependenciesChecker
+> Task :androidApp:generateDebugAssets UP-TO-DATE
+> Task :shared:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :androidApp:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :androidApp:desugarDebugFileDependencies UP-TO-DATE
+> Task :androidApp:processDebugGoogleServices UP-TO-DATE
+> Task :shared:generateCommonMainPharmaDbInterface UP-TO-DATE
+> Task :androidApp:generateDebugResources UP-TO-DATE
+> Task :androidApp:injectCrashlyticsMappingFileIdDebug UP-TO-DATE
+> Task :androidApp:injectCrashlyticsVersionControlInfoDebug UP-TO-DATE
+> Task :shared:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :shared:generateAndroidMainAssets UP-TO-DATE
+> Task :shared:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :androidApp:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :androidApp:extractDeepLinksDebug UP-TO-DATE
+> Task :shared:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :androidApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :androidApp:writeDebugAppMetadata UP-TO-DATE
+> Task :androidApp:mergeDebugJniLibFolders UP-TO-DATE
+> Task :shared:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :androidApp:validateSigningDebug UP-TO-DATE
+> Task :shared:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :androidApp:javaPreCompileDebug UP-TO-DATE
+> Task :shared:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :androidApp:packageDebugResources UP-TO-DATE
+> Task :shared:processAndroidMainManifest UP-TO-DATE
+> Task :shared:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :shared:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :shared:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :shared:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :androidApp:checkDebugAarMetadata UP-TO-DATE
+> Task :shared:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :shared:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :shared:mergeAndroidMainAssets UP-TO-DATE
+> Task :shared:generateActualResourceCollectorsForAndroidMain UP-TO-DATE
+> Task :shared:packageAndroidMainResources UP-TO-DATE
+> Task :androidApp:mergeDebugNativeLibs UP-TO-DATE
+> Task :shared:compileAndroidMainLibraryResources UP-TO-DATE
+> Task :androidApp:stripDebugDebugSymbols UP-TO-DATE
+> Task :shared:parseAndroidMainLocalResources UP-TO-DATE
+> Task :androidApp:processDebugNavigationResources UP-TO-DATE
+> Task :shared:generateAndroidMainRFile UP-TO-DATE
+> Task :androidApp:parseDebugLocalResources UP-TO-DATE
+> Task :androidApp:compileDebugNavigationResources UP-TO-DATE
+> Task :androidApp:mergeDebugAssets UP-TO-DATE
+> Task :androidApp:generateDebugRFile UP-TO-DATE
+> Task :androidApp:checkDebugDuplicateClasses UP-TO-DATE
+> Task :androidApp:compressDebugAssets UP-TO-DATE
+> Task :androidApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :androidApp:mergeDebugResources UP-TO-DATE
+> Task :androidApp:mergeExtDexDebug UP-TO-DATE
+> Task :androidApp:processDebugMainManifest FROM-CACHE
+> Task :androidApp:processDebugManifest FROM-CACHE
+> Task :androidApp:processDebugManifestForPackage FROM-CACHE
+> Task :androidApp:processDebugResources FROM-CACHE
+
+> Task :shared:compileAndroidMain
+w: file:///C:/Users/tania/AndroidStudioProjects/PharmaMobil/shared/src/androidMain/kotlin/pe/edu/upeu/pharmamobile/platform/Formato.android.kt:8:9 'constructor(p0: String!, p1: String!): Locale' is deprecated. Deprecated in Java.
+w: file:///C:/Users/tania/AndroidStudioProjects/PharmaMobil/shared/src/androidMain/kotlin/pe/edu/upeu/pharmamobile/platform/InfoDispositivo.kt:5:1 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+w: file:///C:/Users/tania/AndroidStudioProjects/PharmaMobil/shared/src/commonMain/kotlin/pe/edu/upeu/pharmamobile/App.kt:95:5 'fun KoinContext(koin: Koin = ..., content: ComposableFunction0<Unit>): Unit' is deprecated. KoinContext is not needed anymore. This can be removed. Compose Koin context is setup with StartKoin().
+w: file:///C:/Users/tania/AndroidStudioProjects/PharmaMobil/shared/src/commonMain/kotlin/pe/edu/upeu/pharmamobile/data/remote/EjecutarLlamada.kt:29:13 'typealias IOException = IOException' is deprecated. Use kotlinx.io.IOException instead.
+w: file:///C:/Users/tania/AndroidStudioProjects/PharmaMobil/shared/src/commonMain/kotlin/pe/edu/upeu/pharmamobile/data/repository/AuthRepositorioRest.kt:46:15 'typealias IOException = IOException' is deprecated. Use kotlinx.io.IOException instead.
+w: file:///C:/Users/tania/AndroidStudioProjects/PharmaMobil/shared/src/commonMain/kotlin/pe/edu/upeu/pharmamobile/platform/InfoDispositivo.kt:3:1 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+w: file:///C:/Users/tania/AndroidStudioProjects/PharmaMobil/shared/src/commonMain/kotlin/pe/edu/upeu/pharmamobile/presentation/producto/ProductoScreen.kt:188:17 'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableFunction0<Unit> = ..., tabs: ComposableFunction0<Unit>): Unit' is deprecated. Replaced with PrimaryTabRow and SecondaryTabRow.
+
+> Task :shared:processAndroidMainJavaRes UP-TO-DATE
+> Task :shared:bundleLibRuntimeToDirAndroidMain
+> Task :shared:bundleAndroidMainClassesToCompileJar
+> Task :androidApp:compileDebugKotlin
+> Task :androidApp:processDebugJavaRes UP-TO-DATE
+> Task :androidApp:compileDebugJavaWithJavac NO-SOURCE
+> Task :androidApp:mergeDebugJavaResource UP-TO-DATE
+> Task :androidApp:dexBuilderDebug FROM-CACHE
+> Task :androidApp:mergeProjectDexDebug UP-TO-DATE
+> Task :androidApp:mergeLibDexDebug
+> Task :androidApp:packageDebug
+> Task :androidApp:assembleDebug
+> Task :androidApp:createDebugApkListingFileRedirect
+
+[Incubating] Problems report is available at: file:///C:/Users/tania/AndroidStudioProjects/PharmaMobil/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 50s
+61 actionable tasks: 8 executed, 5 from cache, 48 up-to-date
+Configuration cache entry stored.
